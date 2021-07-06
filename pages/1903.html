@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>使用supervisor管理tomcat，nginx等进程详解 | 二丫讲梵</title>
+    <meta name="generator" content="VuePress 1.8.0">
+    <link rel="icon" href="/img/favicon.ico">
+    <script language="javascript" type="text/javascript" src="/js/pgmanor-self.js"></script>
+    <meta name="description" content="💻学习📝记录🔗分享
+学无止境是永远前进的基础，跃然纸上是对知识的总结交代，与众分享则是实现价值的最好方式。">
+    <meta name="keywords" content="二丫讲梵,Linux,运维,yum,运维艺术,eryajf,jenkins,nexus,golang,vue">
+    <meta name="baidu-site-verification" content="code-LTKHwOecxI">
+    <meta name="theme-color" content="#11a8cd">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="preload" href="/assets/css/0.styles.bab6b875.css" as="style"><link rel="preload" href="/assets/js/app.8ad1afb9.js" as="script"><link rel="preload" href="/assets/js/2.faffa19e.js" as="script"><link rel="preload" href="/assets/js/75.c1a429f0.js" as="script"><link rel="prefetch" href="/assets/js/10.8b9230dd.js"><link rel="prefetch" href="/assets/js/100.6c13a023.js"><link rel="prefetch" href="/assets/js/101.3c3868ff.js"><link rel="prefetch" href="/assets/js/102.b4936732.js"><link rel="prefetch" href="/assets/js/103.a10d22d6.js"><link rel="prefetch" href="/assets/js/104.827e2d15.js"><link rel="prefetch" href="/assets/js/105.fc3ad64a.js"><link rel="prefetch" href="/assets/js/106.b98a5fa3.js"><link rel="prefetch" href="/assets/js/107.892ca7be.js"><link rel="prefetch" href="/assets/js/108.474705f8.js"><link rel="prefetch" href="/assets/js/109.3fb3b9dd.js"><link rel="prefetch" href="/assets/js/11.506bc27a.js"><link rel="prefetch" href="/assets/js/110.254e8639.js"><link rel="prefetch" href="/assets/js/111.6ff39a82.js"><link rel="prefetch" href="/assets/js/112.092ef7d0.js"><link rel="prefetch" href="/assets/js/113.1411d60d.js"><link rel="prefetch" href="/assets/js/114.f7bbe30e.js"><link rel="prefetch" href="/assets/js/115.fd7676e5.js"><link rel="prefetch" href="/assets/js/116.d4e0ce88.js"><link rel="prefetch" href="/assets/js/117.8507ca3d.js"><link rel="prefetch" href="/assets/js/118.a7502430.js"><link rel="prefetch" href="/assets/js/119.1f3aadb9.js"><link rel="prefetch" href="/assets/js/12.c6a09fa9.js"><link rel="prefetch" href="/assets/js/120.d5fddbd2.js"><link rel="prefetch" href="/assets/js/121.3c16499f.js"><link rel="prefetch" href="/assets/js/122.60a09550.js"><link rel="prefetch" href="/assets/js/123.39d9a84e.js"><link rel="prefetch" href="/assets/js/124.d72864d6.js"><link rel="prefetch" href="/assets/js/125.5799a31b.js"><link rel="prefetch" href="/assets/js/126.ba2f3ce1.js"><link rel="prefetch" href="/assets/js/127.0720f31e.js"><link rel="prefetch" href="/assets/js/128.dbd72e9d.js"><link rel="prefetch" href="/assets/js/129.5a812166.js"><link rel="prefetch" href="/assets/js/13.23769307.js"><link rel="prefetch" href="/assets/js/130.85d4be67.js"><link rel="prefetch" href="/assets/js/131.95df4386.js"><link rel="prefetch" href="/assets/js/132.566bbcd1.js"><link rel="prefetch" href="/assets/js/133.957a6668.js"><link rel="prefetch" href="/assets/js/134.52b50f4c.js"><link rel="prefetch" href="/assets/js/135.21bcaa67.js"><link rel="prefetch" href="/assets/js/136.371429d5.js"><link rel="prefetch" href="/assets/js/137.5cd82748.js"><link rel="prefetch" href="/assets/js/138.032dbdcf.js"><link rel="prefetch" href="/assets/js/139.7085744f.js"><link rel="prefetch" href="/assets/js/14.0651b524.js"><link rel="prefetch" href="/assets/js/140.e3a4e607.js"><link rel="prefetch" href="/assets/js/141.4f81b731.js"><link rel="prefetch" href="/assets/js/142.94e8234c.js"><link rel="prefetch" href="/assets/js/143.7372ed24.js"><link rel="prefetch" href="/assets/js/144.a75cda5c.js"><link rel="prefetch" href="/assets/js/145.d93b5dee.js"><link rel="prefetch" href="/assets/js/146.74064f66.js"><link rel="prefetch" href="/assets/js/147.1fc01380.js"><link rel="prefetch" href="/assets/js/148.9d073da1.js"><link rel="prefetch" href="/assets/js/149.b7d09403.js"><link rel="prefetch" href="/assets/js/15.4417812d.js"><link rel="prefetch" href="/assets/js/150.19389b91.js"><link rel="prefetch" href="/assets/js/151.85ba9bb2.js"><link rel="prefetch" href="/assets/js/152.102d5a41.js"><link rel="prefetch" href="/assets/js/153.564fd6b9.js"><link rel="prefetch" href="/assets/js/154.4dcb4aa3.js"><link rel="prefetch" href="/assets/js/155.9a12803c.js"><link rel="prefetch" href="/assets/js/156.83565820.js"><link rel="prefetch" href="/assets/js/157.120a42fa.js"><link rel="prefetch" href="/assets/js/158.c424d6f9.js"><link rel="prefetch" href="/assets/js/159.1f8d7551.js"><link rel="prefetch" href="/assets/js/16.2ea73ea1.js"><link rel="prefetch" href="/assets/js/160.10aceb47.js"><link rel="prefetch" href="/assets/js/161.28f4a914.js"><link rel="prefetch" href="/assets/js/162.0fdb95d3.js"><link rel="prefetch" href="/assets/js/163.5570b1f7.js"><link rel="prefetch" href="/assets/js/164.ddfbf05f.js"><link rel="prefetch" href="/assets/js/165.799bade0.js"><link rel="prefetch" href="/assets/js/166.540dfdce.js"><link rel="prefetch" href="/assets/js/167.5224ceb3.js"><link rel="prefetch" href="/assets/js/168.02c735a4.js"><link rel="prefetch" href="/assets/js/169.050e61e6.js"><link rel="prefetch" href="/assets/js/17.8627c85a.js"><link rel="prefetch" href="/assets/js/170.c4a350f7.js"><link rel="prefetch" href="/assets/js/171.bd2edec8.js"><link rel="prefetch" href="/assets/js/172.23937d39.js"><link rel="prefetch" href="/assets/js/173.7d0a69ac.js"><link rel="prefetch" href="/assets/js/174.30d3bce6.js"><link rel="prefetch" href="/assets/js/175.b9d4a87a.js"><link rel="prefetch" href="/assets/js/176.337cb377.js"><link rel="prefetch" href="/assets/js/177.6eddd411.js"><link rel="prefetch" href="/assets/js/178.1ec760f9.js"><link rel="prefetch" href="/assets/js/179.18836caf.js"><link rel="prefetch" href="/assets/js/18.fa4dcbd6.js"><link rel="prefetch" href="/assets/js/180.1773da8a.js"><link rel="prefetch" href="/assets/js/181.42ef98cd.js"><link rel="prefetch" href="/assets/js/182.7a6c4bec.js"><link rel="prefetch" href="/assets/js/183.b93c7ce0.js"><link rel="prefetch" href="/assets/js/184.448d3a2e.js"><link rel="prefetch" href="/assets/js/185.558b843a.js"><link rel="prefetch" href="/assets/js/186.5cfc316a.js"><link rel="prefetch" href="/assets/js/187.83c762d9.js"><link rel="prefetch" href="/assets/js/188.a3e54335.js"><link rel="prefetch" href="/assets/js/189.b039fb36.js"><link rel="prefetch" href="/assets/js/19.5b9c174c.js"><link rel="prefetch" href="/assets/js/190.d8bc3b1c.js"><link rel="prefetch" href="/assets/js/191.d4902385.js"><link rel="prefetch" href="/assets/js/192.d531e154.js"><link rel="prefetch" href="/assets/js/193.2930896b.js"><link rel="prefetch" href="/assets/js/194.7bd72854.js"><link rel="prefetch" href="/assets/js/195.3792c78b.js"><link rel="prefetch" href="/assets/js/196.3ad4444c.js"><link rel="prefetch" href="/assets/js/197.127419b3.js"><link rel="prefetch" href="/assets/js/198.17c2e0e8.js"><link rel="prefetch" href="/assets/js/199.7a8d3a17.js"><link rel="prefetch" href="/assets/js/20.f8ca7cd7.js"><link rel="prefetch" href="/assets/js/200.66a96bdc.js"><link rel="prefetch" href="/assets/js/201.1235f781.js"><link rel="prefetch" href="/assets/js/202.e9a7de3a.js"><link rel="prefetch" href="/assets/js/203.1327e310.js"><link rel="prefetch" href="/assets/js/204.c0e3ce5e.js"><link rel="prefetch" href="/assets/js/205.ef5cf878.js"><link rel="prefetch" href="/assets/js/206.f493b40a.js"><link rel="prefetch" href="/assets/js/207.9d9957e2.js"><link rel="prefetch" href="/assets/js/208.2281320c.js"><link rel="prefetch" href="/assets/js/209.655132f6.js"><link rel="prefetch" href="/assets/js/21.3e0e5bfe.js"><link rel="prefetch" href="/assets/js/210.55c9cde7.js"><link rel="prefetch" href="/assets/js/211.c6b13f8a.js"><link rel="prefetch" href="/assets/js/212.bb9af647.js"><link rel="prefetch" href="/assets/js/213.c08f9e12.js"><link rel="prefetch" href="/assets/js/214.4985bb11.js"><link rel="prefetch" href="/assets/js/215.e0c9d53d.js"><link rel="prefetch" href="/assets/js/216.d7fb3abe.js"><link rel="prefetch" href="/assets/js/217.e3de2249.js"><link rel="prefetch" href="/assets/js/218.786c54a9.js"><link rel="prefetch" href="/assets/js/219.153f455a.js"><link rel="prefetch" href="/assets/js/22.67d878c6.js"><link rel="prefetch" href="/assets/js/220.7e133cb1.js"><link rel="prefetch" href="/assets/js/221.0f186be9.js"><link rel="prefetch" href="/assets/js/222.d2fb2535.js"><link rel="prefetch" href="/assets/js/223.5f2ac5a3.js"><link rel="prefetch" href="/assets/js/224.861719f4.js"><link rel="prefetch" href="/assets/js/225.4375c5aa.js"><link rel="prefetch" href="/assets/js/226.ed5fbd41.js"><link rel="prefetch" href="/assets/js/227.902f0e4e.js"><link rel="prefetch" href="/assets/js/228.06bc0b4a.js"><link rel="prefetch" href="/assets/js/229.e4149636.js"><link rel="prefetch" href="/assets/js/23.ff2da312.js"><link rel="prefetch" href="/assets/js/230.4619ea07.js"><link rel="prefetch" href="/assets/js/231.230f34ff.js"><link rel="prefetch" href="/assets/js/232.08c31484.js"><link rel="prefetch" href="/assets/js/233.96a02257.js"><link rel="prefetch" href="/assets/js/234.3e475640.js"><link rel="prefetch" href="/assets/js/235.81b8da92.js"><link rel="prefetch" href="/assets/js/236.44d9122a.js"><link rel="prefetch" href="/assets/js/237.1271d67a.js"><link rel="prefetch" href="/assets/js/238.9d982a5a.js"><link rel="prefetch" href="/assets/js/239.b6ea5d7e.js"><link rel="prefetch" href="/assets/js/24.10d2c238.js"><link rel="prefetch" href="/assets/js/240.73e02431.js"><link rel="prefetch" href="/assets/js/241.70f2122b.js"><link rel="prefetch" href="/assets/js/242.37d37eba.js"><link rel="prefetch" href="/assets/js/243.5eced2f7.js"><link rel="prefetch" href="/assets/js/244.f8772176.js"><link rel="prefetch" href="/assets/js/245.bbacbeda.js"><link rel="prefetch" href="/assets/js/246.0dc03036.js"><link rel="prefetch" href="/assets/js/247.3f007b32.js"><link rel="prefetch" href="/assets/js/248.4cd6e290.js"><link rel="prefetch" href="/assets/js/249.e4a7fa57.js"><link rel="prefetch" href="/assets/js/25.8c62dcb0.js"><link rel="prefetch" href="/assets/js/250.9acac903.js"><link rel="prefetch" href="/assets/js/251.c703b649.js"><link rel="prefetch" href="/assets/js/252.8d036817.js"><link rel="prefetch" href="/assets/js/253.5cf61de4.js"><link rel="prefetch" href="/assets/js/254.5929c32f.js"><link rel="prefetch" href="/assets/js/255.eb7a9e3f.js"><link rel="prefetch" href="/assets/js/256.f82c6801.js"><link rel="prefetch" href="/assets/js/257.f6f9a922.js"><link rel="prefetch" href="/assets/js/258.f7150c44.js"><link rel="prefetch" href="/assets/js/259.a2befe3f.js"><link rel="prefetch" href="/assets/js/26.739943a8.js"><link rel="prefetch" href="/assets/js/260.d2ceb240.js"><link rel="prefetch" href="/assets/js/261.11214027.js"><link rel="prefetch" href="/assets/js/262.06c8402d.js"><link rel="prefetch" href="/assets/js/263.d89721ea.js"><link rel="prefetch" href="/assets/js/264.94be1b1c.js"><link rel="prefetch" href="/assets/js/265.28b256f8.js"><link rel="prefetch" href="/assets/js/266.2f2d0a86.js"><link rel="prefetch" href="/assets/js/267.244a453a.js"><link rel="prefetch" href="/assets/js/268.c9d0da03.js"><link rel="prefetch" href="/assets/js/269.6b84804e.js"><link rel="prefetch" href="/assets/js/27.16001572.js"><link rel="prefetch" href="/assets/js/270.d72a38d0.js"><link rel="prefetch" href="/assets/js/271.9d07f390.js"><link rel="prefetch" href="/assets/js/272.1eabd555.js"><link rel="prefetch" href="/assets/js/273.8ef862cb.js"><link rel="prefetch" href="/assets/js/274.b4a1ee60.js"><link rel="prefetch" href="/assets/js/275.0a4fd634.js"><link rel="prefetch" href="/assets/js/276.cc92ae86.js"><link rel="prefetch" href="/assets/js/277.f13e83f6.js"><link rel="prefetch" href="/assets/js/278.ab99f8d5.js"><link rel="prefetch" href="/assets/js/279.9c999b2d.js"><link rel="prefetch" href="/assets/js/28.0e00edec.js"><link rel="prefetch" href="/assets/js/280.c3ae2954.js"><link rel="prefetch" href="/assets/js/281.e3a8e124.js"><link rel="prefetch" href="/assets/js/282.41dfca8c.js"><link rel="prefetch" href="/assets/js/283.34e01262.js"><link rel="prefetch" href="/assets/js/284.bd12d38f.js"><link rel="prefetch" href="/assets/js/285.7e85d45e.js"><link rel="prefetch" href="/assets/js/286.e318cef6.js"><link rel="prefetch" href="/assets/js/287.9aea919b.js"><link rel="prefetch" href="/assets/js/288.0fc6a79b.js"><link rel="prefetch" href="/assets/js/289.04977573.js"><link rel="prefetch" href="/assets/js/29.13b94edf.js"><link rel="prefetch" href="/assets/js/290.d1a25906.js"><link rel="prefetch" href="/assets/js/291.349e8e14.js"><link rel="prefetch" href="/assets/js/292.5a3349c2.js"><link rel="prefetch" href="/assets/js/293.fd998980.js"><link rel="prefetch" href="/assets/js/294.fcc0932b.js"><link rel="prefetch" href="/assets/js/295.ad0c0a4e.js"><link rel="prefetch" href="/assets/js/296.f687c1ac.js"><link rel="prefetch" href="/assets/js/297.0383e8ad.js"><link rel="prefetch" href="/assets/js/298.f12a5734.js"><link rel="prefetch" href="/assets/js/299.7e459e37.js"><link rel="prefetch" href="/assets/js/3.adcbec93.js"><link rel="prefetch" href="/assets/js/30.93e7f877.js"><link rel="prefetch" href="/assets/js/300.13384580.js"><link rel="prefetch" href="/assets/js/301.b574a280.js"><link rel="prefetch" href="/assets/js/302.0da80f93.js"><link rel="prefetch" href="/assets/js/303.5bd62648.js"><link rel="prefetch" href="/assets/js/304.277f1560.js"><link rel="prefetch" href="/assets/js/305.2fb400b0.js"><link rel="prefetch" href="/assets/js/306.5591530b.js"><link rel="prefetch" href="/assets/js/307.03baf796.js"><link rel="prefetch" href="/assets/js/308.19322a60.js"><link rel="prefetch" href="/assets/js/309.2865acfb.js"><link rel="prefetch" href="/assets/js/31.5b22dbb7.js"><link rel="prefetch" href="/assets/js/310.576dbc00.js"><link rel="prefetch" href="/assets/js/311.cf8fabf8.js"><link rel="prefetch" href="/assets/js/312.39a65d0f.js"><link rel="prefetch" href="/assets/js/313.420ab61f.js"><link rel="prefetch" href="/assets/js/314.dcc48057.js"><link rel="prefetch" href="/assets/js/315.5b0b2441.js"><link rel="prefetch" href="/assets/js/316.a2581b07.js"><link rel="prefetch" href="/assets/js/317.72aa861a.js"><link rel="prefetch" href="/assets/js/318.cc76afe8.js"><link rel="prefetch" href="/assets/js/319.793aee8b.js"><link rel="prefetch" href="/assets/js/32.b9866617.js"><link rel="prefetch" href="/assets/js/320.d6f931c8.js"><link rel="prefetch" href="/assets/js/321.241c5325.js"><link rel="prefetch" href="/assets/js/322.25b2dd56.js"><link rel="prefetch" href="/assets/js/323.6e90d378.js"><link rel="prefetch" href="/assets/js/324.17d63946.js"><link rel="prefetch" href="/assets/js/325.29d7a602.js"><link rel="prefetch" href="/assets/js/326.6d8027cb.js"><link rel="prefetch" href="/assets/js/327.bc3bc15f.js"><link rel="prefetch" href="/assets/js/328.e3166599.js"><link rel="prefetch" href="/assets/js/329.4ee14451.js"><link rel="prefetch" href="/assets/js/33.0a48da5c.js"><link rel="prefetch" href="/assets/js/330.f3fbbca0.js"><link rel="prefetch" href="/assets/js/331.51b010c3.js"><link rel="prefetch" href="/assets/js/332.6568c142.js"><link rel="prefetch" href="/assets/js/333.e5160bc0.js"><link rel="prefetch" href="/assets/js/334.3f503206.js"><link rel="prefetch" href="/assets/js/335.a77287f3.js"><link rel="prefetch" href="/assets/js/336.bc825545.js"><link rel="prefetch" href="/assets/js/337.1e6e3548.js"><link rel="prefetch" href="/assets/js/338.cee11a1b.js"><link rel="prefetch" href="/assets/js/339.5ae13575.js"><link rel="prefetch" href="/assets/js/34.19cea838.js"><link rel="prefetch" href="/assets/js/340.241942f8.js"><link rel="prefetch" href="/assets/js/341.3c1b3334.js"><link rel="prefetch" href="/assets/js/342.e325d110.js"><link rel="prefetch" href="/assets/js/343.6fb23cbb.js"><link rel="prefetch" href="/assets/js/344.1e312068.js"><link rel="prefetch" href="/assets/js/345.eb119015.js"><link rel="prefetch" href="/assets/js/346.590b7466.js"><link rel="prefetch" href="/assets/js/347.d642932e.js"><link rel="prefetch" href="/assets/js/348.9a253540.js"><link rel="prefetch" href="/assets/js/349.1bae4df5.js"><link rel="prefetch" href="/assets/js/35.8ad77529.js"><link rel="prefetch" href="/assets/js/350.af306fed.js"><link rel="prefetch" href="/assets/js/351.54e3fb27.js"><link rel="prefetch" href="/assets/js/352.8329e7db.js"><link rel="prefetch" href="/assets/js/353.bacebc1c.js"><link rel="prefetch" href="/assets/js/354.0fabb2ea.js"><link rel="prefetch" href="/assets/js/355.a08d86b1.js"><link rel="prefetch" href="/assets/js/356.cf3325b4.js"><link rel="prefetch" href="/assets/js/357.312670b2.js"><link rel="prefetch" href="/assets/js/358.7384cfb0.js"><link rel="prefetch" href="/assets/js/359.8b6c2c02.js"><link rel="prefetch" href="/assets/js/36.01f75b05.js"><link rel="prefetch" href="/assets/js/360.0158848d.js"><link rel="prefetch" href="/assets/js/361.f9ccd2c3.js"><link rel="prefetch" href="/assets/js/362.a0c3f8fa.js"><link rel="prefetch" href="/assets/js/363.fea910be.js"><link rel="prefetch" href="/assets/js/364.8145e685.js"><link rel="prefetch" href="/assets/js/365.c272dd2a.js"><link rel="prefetch" href="/assets/js/366.06a1d9b3.js"><link rel="prefetch" href="/assets/js/367.3245841e.js"><link rel="prefetch" href="/assets/js/368.9af6cf99.js"><link rel="prefetch" href="/assets/js/369.f6833f93.js"><link rel="prefetch" href="/assets/js/37.ba86e777.js"><link rel="prefetch" href="/assets/js/370.489986a2.js"><link rel="prefetch" href="/assets/js/371.8a63cfd9.js"><link rel="prefetch" href="/assets/js/372.e82d9a72.js"><link rel="prefetch" href="/assets/js/373.d684c922.js"><link rel="prefetch" href="/assets/js/374.bbd25931.js"><link rel="prefetch" href="/assets/js/375.59134fdc.js"><link rel="prefetch" href="/assets/js/376.1d1391d8.js"><link rel="prefetch" href="/assets/js/377.e675f52b.js"><link rel="prefetch" href="/assets/js/378.94fc1900.js"><link rel="prefetch" href="/assets/js/379.d6203874.js"><link rel="prefetch" href="/assets/js/38.c1d6d798.js"><link rel="prefetch" href="/assets/js/39.ee7406fb.js"><link rel="prefetch" href="/assets/js/4.bea19bcf.js"><link rel="prefetch" href="/assets/js/40.4222bf33.js"><link rel="prefetch" href="/assets/js/41.67eefadc.js"><link rel="prefetch" href="/assets/js/42.2868150e.js"><link rel="prefetch" href="/assets/js/43.7002b07d.js"><link rel="prefetch" href="/assets/js/44.a857193b.js"><link rel="prefetch" href="/assets/js/45.745dcb38.js"><link rel="prefetch" href="/assets/js/46.33775fc9.js"><link rel="prefetch" href="/assets/js/47.73df6d71.js"><link rel="prefetch" href="/assets/js/48.1f3b7b84.js"><link rel="prefetch" href="/assets/js/49.b898b6c0.js"><link rel="prefetch" href="/assets/js/5.37946818.js"><link rel="prefetch" href="/assets/js/50.a994246f.js"><link rel="prefetch" href="/assets/js/51.7d4e5cef.js"><link rel="prefetch" href="/assets/js/52.ed37ae3e.js"><link rel="prefetch" href="/assets/js/53.469bc012.js"><link rel="prefetch" href="/assets/js/54.0dfb4e7a.js"><link rel="prefetch" href="/assets/js/55.226b632a.js"><link rel="prefetch" href="/assets/js/56.a81b057d.js"><link rel="prefetch" href="/assets/js/57.37d943d0.js"><link rel="prefetch" href="/assets/js/58.c9934f3d.js"><link rel="prefetch" href="/assets/js/59.32ec252d.js"><link rel="prefetch" href="/assets/js/6.a056165f.js"><link rel="prefetch" href="/assets/js/60.03f7c184.js"><link rel="prefetch" href="/assets/js/61.84f6f48c.js"><link rel="prefetch" href="/assets/js/62.7866714b.js"><link rel="prefetch" href="/assets/js/63.e5ab9ca0.js"><link rel="prefetch" href="/assets/js/64.6f096191.js"><link rel="prefetch" href="/assets/js/65.f18d3832.js"><link rel="prefetch" href="/assets/js/66.7cba7db3.js"><link rel="prefetch" href="/assets/js/67.0c3f4f51.js"><link rel="prefetch" href="/assets/js/68.4a92686b.js"><link rel="prefetch" href="/assets/js/69.d878bf0f.js"><link rel="prefetch" href="/assets/js/7.11908254.js"><link rel="prefetch" href="/assets/js/70.0e0df33e.js"><link rel="prefetch" href="/assets/js/71.10209cbc.js"><link rel="prefetch" href="/assets/js/72.ef389b0e.js"><link rel="prefetch" href="/assets/js/73.48e6c091.js"><link rel="prefetch" href="/assets/js/74.6e4a1866.js"><link rel="prefetch" href="/assets/js/76.5ae212f4.js"><link rel="prefetch" href="/assets/js/77.96095e22.js"><link rel="prefetch" href="/assets/js/78.f88e262f.js"><link rel="prefetch" href="/assets/js/79.451d73d0.js"><link rel="prefetch" href="/assets/js/8.bf3017ac.js"><link rel="prefetch" href="/assets/js/80.c736bcfb.js"><link rel="prefetch" href="/assets/js/81.24f56b0c.js"><link rel="prefetch" href="/assets/js/82.358b1044.js"><link rel="prefetch" href="/assets/js/83.a63166c6.js"><link rel="prefetch" href="/assets/js/84.99932dc1.js"><link rel="prefetch" href="/assets/js/85.0ab61ae7.js"><link rel="prefetch" href="/assets/js/86.3a1c62ef.js"><link rel="prefetch" href="/assets/js/87.5b5b2cd1.js"><link rel="prefetch" href="/assets/js/88.b264e929.js"><link rel="prefetch" href="/assets/js/89.5f9e4a78.js"><link rel="prefetch" href="/assets/js/9.c8c748ec.js"><link rel="prefetch" href="/assets/js/90.5aef4772.js"><link rel="prefetch" href="/assets/js/91.b06460d5.js"><link rel="prefetch" href="/assets/js/92.ca85ba09.js"><link rel="prefetch" href="/assets/js/93.482a4d00.js"><link rel="prefetch" href="/assets/js/94.0b9fb6c7.js"><link rel="prefetch" href="/assets/js/95.6d8516ba.js"><link rel="prefetch" href="/assets/js/96.216b2b65.js"><link rel="prefetch" href="/assets/js/97.1aa6af78.js"><link rel="prefetch" href="/assets/js/98.51a62062.js"><link rel="prefetch" href="/assets/js/99.3b9a0f10.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.bab6b875.css">
+  </head>
+  <body class="theme-mode-light">
+    <div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/img/logo.png" alt="二丫讲梵" class="logo"> <span class="site-name can-hide">二丫讲梵</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">首页</a></div><div class="nav-item"><a href="/ops/" class="nav-link">运维</a></div><div class="nav-item"><a href="/topic/" class="nav-link">专题</a></div><div class="nav-item"><a href="/life/" class="nav-link">生活</a></div><div class="nav-item"><a href="/code/" class="nav-link">编程</a></div><div class="nav-item"><a href="/pages/11c668/" class="nav-link">周刊</a></div><div class="nav-item"><a href="/about/" class="nav-link">关于</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引" class="dropdown-title"><a href="/categories/" class="link-title">索引</a> <span class="title" style="display:none;">索引</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="页面" class="dropdown-title"><a href="/pages/ba90ae/" class="link-title">页面</a> <span class="title" style="display:none;">页面</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/ba90ae/" class="nav-link">友链</a></li></ul></div></div> <a href="https://github.com/eryajf/eryajf.github.io" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar" style="display:none;"><div class="blogger"><img src="https://tva2.sinaimg.cn/large/008k1Yt0ly1gri6ownwg9j306o08wglu.jpg"> <div class="blogger-info"><h3>二丫讲梵</h3> <span>行者常至，为者常成</span></div></div> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">首页</a></div><div class="nav-item"><a href="/ops/" class="nav-link">运维</a></div><div class="nav-item"><a href="/topic/" class="nav-link">专题</a></div><div class="nav-item"><a href="/life/" class="nav-link">生活</a></div><div class="nav-item"><a href="/code/" class="nav-link">编程</a></div><div class="nav-item"><a href="/pages/11c668/" class="nav-link">周刊</a></div><div class="nav-item"><a href="/about/" class="nav-link">关于</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引" class="dropdown-title"><a href="/categories/" class="link-title">索引</a> <span class="title" style="display:none;">索引</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="页面" class="dropdown-title"><a href="/pages/ba90ae/" class="link-title">页面</a> <span class="title" style="display:none;">页面</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/pages/ba90ae/" class="nav-link">友链</a></li></ul></div></div> <a href="https://github.com/eryajf/eryajf.github.io" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>最佳实践</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>迎刃而解</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Nginx</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Php</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Zabbix</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Prometheus</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Grafana</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>CentOS</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Supervisord</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/pages/1903.html" aria-current="page" class="active sidebar-link">使用supervisor管理tomcat，nginx等进程详解</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/pages/1903.html#_1-介绍。" class="sidebar-link">1，介绍。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_2-安装。" class="sidebar-link">2，安装。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_3-创建主配置。" class="sidebar-link">3，创建主配置。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_4-配置管理-tomcat-进程。" class="sidebar-link">4，配置管理 tomcat 进程。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_5-启动-supervisor。" class="sidebar-link">5，启动 supervisor。</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/pages/1903.html#_1-创建-supervisor-服务管理文件。" class="sidebar-link">1，创建 supervisor 服务管理文件。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_2-加入开机自启。" class="sidebar-link">2，加入开机自启。</a></li></ul></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_6-开启-web-管理。" class="sidebar-link">6，开启 web 管理。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_7-配置文件详解。" class="sidebar-link">7，配置文件详解。</a></li><li class="sidebar-sub-header"><a href="/pages/1903.html#_8-参考文章。" class="sidebar-link">8，参考文章。</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Systemd</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Docker</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Docker-Compose</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Rancher</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Ansible</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>OpenLdap</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>GitLab</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Etcd</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>RabbitMQ</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Kafka</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Mysql</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>MongoDB</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>OpenVPN</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Kvm</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>VMware</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>配置文件详解</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Other</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <div><main class="page"><div class="theme-vdoing-wrapper "><div class="articleInfo-wrap" data-v-1cd794fe><div class="articleInfo" data-v-1cd794fe><ul class="breadcrumbs" data-v-1cd794fe><li data-v-1cd794fe><a href="/" title="首页" class="iconfont icon-home router-link-active" data-v-1cd794fe></a></li> <li data-v-1cd794fe><a href="/categories/?category=%E8%BF%90%E7%BB%B4%E8%A7%82%E6%AD%A2" title="分类" data-v-1cd794fe>运维观止</a></li> <li data-v-1cd794fe><a href="/categories/?category=Supervisord" title="分类" data-v-1cd794fe>Supervisord</a></li> <!----></ul> <div class="info" data-v-1cd794fe><div title="作者" class="author iconfont icon-touxiang" data-v-1cd794fe><a href="https://github.com/eryajf" target="_blank" title="作者" class="beLink" data-v-1cd794fe>二丫讲梵</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-1cd794fe><a href="javascript:;" data-v-1cd794fe>2018-10-22</a></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABH1JREFUSA3tVl1oHFUUPmdmd2ltklqbpJDiNnXFmgbFktho7YMPNiJSSZM0+CAYSkUELVhM6YuwIPpgoOKDqOBDC0XE2CQoNtQXBUFTTcCi+Wlh1V2TQExsUzcltd3M9Tt3ZjZzZ2fT+OJTL8yeM+eee757fmeJbq//KQL8X3DUSFOcfr7cRsRtxNQMWueeVzOkaITIGqQHNg5y8+jNW9ldM7A6nTpAjuolUikAwq7CE3WcM2RRDz+XGVgN3FptU/aUSlvq9Pa3iZ1+sgAqJyyAFqkipd9dqiwHF3P65YycLWc/6sqGrvoEoIp6DOFaX5h6+dnfjkWprwqsPk0dUGq5vySwDImC10KxFHgGL1SWoc92O3eVht09qdXNH11I2SsTsJYqMWzihqGMi+A+Garf3BAuuLI5oGlULyNfyB/HYNujwktOfRrMr5t77NmevqaUopx0grnKAyvVpmwUDB4x6FPXuGvYLTDwWsejwgtgkYKPqRJg8SV6xaiZ3ZTppGneS4yfH5/66fZSDHv+QZci/+h5c5UHtpy67JUqGppM0sh0Nc1dW6/N1W5Yoqat8/TU/VnadmdeW2PLLSyh0cvxBs3KbqTmwYPpxN4do/mzE8nEpvX/UMu2Wbp74zUAK5q6WkHns7V0eWkdPbPzd3rxkTGybadYySumVzhcaJFbs5UrEkQ/+CK8gF5dnh/6ciIZ73gwQ927L1IitoxKLXYP3SjYdOrHHfTZhRRlFyrorafPk20B3HPD1y2G3qKZME5Jcf3t/HUC13/8tSd++vqFveMUTwAUxSUFI1QekR1+bIze3D9MF2aq6cPvG72CgnldWCFqyRw3lwH8ZMerjTD9ElRO7Gv44wNpC90aASqGfVlz/Rx17srQ57/UU26hkhQqUB7dBR71WmzQhHUnblGmVOEw0jhbV1n9OlXUDCIRGaNV5Jp43N516fN7JmnTHdfp7Hgy0luO4aMhtkLL8Bi3bUWYvzh5Mn1dTxrL6QmGuRhGL/TiTTxRoEdTszSaq9GR0NGA3KdkOz3hqSV3MIDhQ5IVX/Ivx3umBti2es2h4eZby7x8br1rkf7Mo90AqC8aQ3sJeNzqFRu+vSANAQe3PL7l0HGOAdwDCeZYvNKeoZp1Qfs6Aipndh86HmFRi0LAnEO47wsqM6cdfjh3jBPUzhZy7nvlUfFsamED1VQt6aISHVymXZ/B2aCtIG8AI8xfobj2d3en1wWVhOeHELKmLQ1s211s88comkv4UCwWyF787mJdYXtNfhKAXVqnKTq8QZvGAGGOfaTo5pGZ/PwbUCr5+DPr/1J92JNHr9aOl/F3iI5+O1nfybsGxoimvZ3ViWSluDITw3P37mypheDIPY0tw7+O/5ApbkYw+zpfaUVu32Pi98+defdUhEpZkRFq0aqyNh9FuL9hpYbEm6iwi0z2REd09ZmyENEbuhjDWzKvZXTqKYaBIr3tt5kuPtQBZFvEUwHt60vfCNu41XsksH9Ij1BMMz1Y0OOunHNShFIP5868g5zeXmuLwL9T4b6Q2+KejgAAAABJRU5ErkJggg==">
+          使用supervisor管理tomcat，nginx等进程详解
+        </h1>  <div class="theme-vdoing-content content__default"><h2 id="_1-介绍。"><a href="#_1-介绍。" class="header-anchor">#</a> 1，介绍。</h2> <p>官网：<a href="http://supervisord.org/" target="_blank" rel="noopener noreferrer">http://supervisord.org<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p>Supervisor 是用 Python 开发的一套通用的进程管理程序，能将一个普通的命令行进程变为后台 daemon，并监控进程状态，异常退出时能自动重启。</p> <p>它是通过 fork/exec 的方式把这些被管理的进程当作 supervisor 的子进程来启动，这样只要在 supervisor 的配置文件中，把要管理的进程的可执行文件的路径写进去即可。也实现当子进程挂掉的时候，父进程可以准确获取子进程挂掉的信息的，可以选择是否自己启动和报警。supervisor 还提供了一个功能，可以为 supervisord 或者每个子进程，设置一个非 root 的 user，这个 user 就可以管理它对应的进程。</p> <h2 id="_2-安装。"><a href="#_2-安装。" class="header-anchor">#</a> 2，安装。</h2> <p>这里我<code>推荐使用easy_install</code>的方式安装，因为这种方式安装的自定义性比较强，安装也比较方便，虽然网上有不少地方也介绍 yum 方式的安装，但是据我个人的体验来看，不如这种安装方式来的好。</p> <p>而且这种方式安装以及使用，是适用于 CentOS-6 以及 CenOS-7 两个大系统版本的。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code>yum <span class="token function">install</span> -y python-setuptools.noarch 
+easy_install supervisor 
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>如果两条命令都执行没有问题，就安装成功了。</p> <p>也可以通过如下指令测试安装是否成功：</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>root@moban ~<span class="token punctuation">]</span><span class="token variable">$echo_supervisord_conf</span>
+<span class="token punctuation">;</span> Sample supervisor config file.
+<span class="token punctuation">;</span>
+<span class="token punctuation">;</span> For <span class="token function">more</span> information on the config file, please see:
+<span class="token punctuation">;</span> http://supervisord.org/configuration.html
+<span class="token punctuation">;</span>
+<span class="token punctuation">;</span> Notes:
+<span class="token punctuation">;</span>  - Shell expansion <span class="token punctuation">(</span><span class="token string">&quot;~&quot;</span> or <span class="token string">&quot;<span class="token environment constant">$HOME</span>&quot;</span><span class="token punctuation">)</span> is not supported.  Environment
+<span class="token punctuation">;</span>    variables can be expanded using this syntax: <span class="token string">&quot;%(ENV_HOME)s&quot;</span><span class="token builtin class-name">.</span>
+<span class="token punctuation">;</span>  - Quotes around values are not supported, except <span class="token keyword">in</span> the <span class="token keyword">case</span> of
+<span class="token punctuation">;</span>    the <span class="token assign-left variable">environment</span><span class="token operator">=</span> options as shown below.
+<span class="token punctuation">;</span>  - Comments must have a leading space: <span class="token string">&quot;a=b ;comment&quot;</span> not <span class="token string">&quot;a=b;comment&quot;</span><span class="token builtin class-name">.</span>
+<span class="token punctuation">;</span>  - Command will be truncated <span class="token keyword">if</span> it looks like a config <span class="token function">file</span> comment, e.g.
+<span class="token punctuation">;</span>    <span class="token string">&quot;command=bash -c 'foo ; bar'&quot;</span> will truncate to <span class="token string">&quot;command=bash -c 'foo &quot;</span><span class="token builtin class-name">.</span>
+ 
+<span class="token punctuation">[</span>unix_http_server<span class="token punctuation">]</span>
+<span class="token assign-left variable">file</span><span class="token operator">=</span>/tmp/supervisor.sock   <span class="token punctuation">;</span> the path to the socket <span class="token function">file</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">chmod</span><span class="token operator">=</span>0700                 <span class="token punctuation">;</span> socket <span class="token function">file</span> mode <span class="token punctuation">(</span>default 0700<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">chown</span><span class="token operator">=</span>nobody:nogroup       <span class="token punctuation">;</span> socket <span class="token function">file</span> uid:gid owner
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> default is no username <span class="token punctuation">(</span>open server<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> default is no password <span class="token punctuation">(</span>open server<span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>         <span class="token punctuation">;</span> inet <span class="token punctuation">(</span>TCP<span class="token punctuation">)</span> server disabled by default
+<span class="token punctuation">;</span><span class="token assign-left variable">port</span><span class="token operator">=</span><span class="token number">127.0</span>.0.1:9001        <span class="token punctuation">;</span> ip_address:port specifier, *:port <span class="token keyword">for</span> all iface
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> default is no username <span class="token punctuation">(</span>open server<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> default is no password <span class="token punctuation">(</span>open server<span class="token punctuation">)</span>
+ 
+<span class="token punctuation">[</span>supervisord<span class="token punctuation">]</span>
+<span class="token assign-left variable">logfile</span><span class="token operator">=</span>/tmp/supervisord.log <span class="token punctuation">;</span> main log <span class="token function">file</span><span class="token punctuation">;</span> default <span class="token variable">$CWD</span>/supervisord.log
+<span class="token assign-left variable">logfile_maxbytes</span><span class="token operator">=</span>50MB        <span class="token punctuation">;</span> max main logfile bytes b4 rotation<span class="token punctuation">;</span> default 50MB
+<span class="token assign-left variable">logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>           <span class="token punctuation">;</span> <span class="token comment"># of main logfile backups; 0 means none, default 10</span>
+<span class="token assign-left variable">loglevel</span><span class="token operator">=</span>info                <span class="token punctuation">;</span> log level<span class="token punctuation">;</span> default info<span class="token punctuation">;</span> others: debug,warn,trace
+<span class="token assign-left variable">pidfile</span><span class="token operator">=</span>/tmp/supervisord.pid <span class="token punctuation">;</span> supervisord pidfile<span class="token punctuation">;</span> default supervisord.pid
+<span class="token assign-left variable">nodaemon</span><span class="token operator">=</span>false               <span class="token punctuation">;</span> start <span class="token keyword">in</span> foreground <span class="token keyword">if</span> <span class="token boolean">true</span><span class="token punctuation">;</span> default <span class="token boolean">false</span>
+<span class="token assign-left variable">minfds</span><span class="token operator">=</span><span class="token number">1024</span>                  <span class="token punctuation">;</span> min. avail startup <span class="token function">file</span> descriptors<span class="token punctuation">;</span> default <span class="token number">1024</span>
+<span class="token assign-left variable">minprocs</span><span class="token operator">=</span><span class="token number">200</span>                 <span class="token punctuation">;</span> min. avail process descriptors<span class="token punctuation">;</span>default <span class="token number">200</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">umask</span><span class="token operator">=</span>022                   <span class="token punctuation">;</span> process <span class="token function">file</span> creation <span class="token builtin class-name">umask</span><span class="token punctuation">;</span> default 022
+<span class="token punctuation">;</span><span class="token assign-left variable">user</span><span class="token operator">=</span>chrism                 <span class="token punctuation">;</span> default is current user, required <span class="token keyword">if</span> root
+<span class="token punctuation">;</span><span class="token assign-left variable">identifier</span><span class="token operator">=</span>supervisor       <span class="token punctuation">;</span> supervisord identifier, default is <span class="token string">'supervisor'</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">directory</span><span class="token operator">=</span>/tmp              <span class="token punctuation">;</span> default is not to <span class="token builtin class-name">cd</span> during start
+<span class="token punctuation">;</span><span class="token assign-left variable">nocleanup</span><span class="token operator">=</span>true              <span class="token punctuation">;</span> don<span class="token string">'t clean up tempfiles at start; default false
+;childlogdir=/tmp            ; '</span>AUTO<span class="token string">' child log dir, default $TEMP
+;environment=KEY=&quot;value&quot;     ; key value pairs to add to environment
+;strip_ansi=false            ; strip ansi escape codes in logs; def. false
+ 
+; The rpcinterface:supervisor section must remain in the config file for
+; RPC (supervisorctl/web interface) to work.  Additional interfaces may be
+; added by defining them in separate [rpcinterface:x] sections.
+ 
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+ 
+; The supervisorctl section configures how supervisorctl will connect to
+; supervisord.  configure it match the settings in either the unix_http_server
+; or inet_http_server section.
+ 
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
+;serverurl=http://127.0.0.1:9001 ; use an http:// url to specify an inet socket
+;username=chris              ; should be same as in [*_http_server] if set
+;password=123                ; should be same as in [*_http_server] if set
+;prompt=mysupervisor         ; cmd line prompt (default &quot;supervisor&quot;)
+;history_file=~/.sc_history  ; use readline history if available
+ 
+; The sample program section below shows all possible program subsection values.
+; Create one or more '</span>real<span class="token string">' program: sections to be able to control them under
+; supervisor.
+ 
+;[program:theprogramname]
+;command=/bin/cat              ; the program (relative uses PATH, can take args)
+;process_name=%(program_name)s ; process_name expr (default %(program_name)s)
+;numprocs=1                    ; number of processes copies to start (def 1)
+;directory=/tmp                ; directory to cwd to before exec (def no cwd)
+;umask=022                     ; umask for process (default None)
+;priority=999                  ; the relative start priority (default 999)
+;autostart=true                ; start at supervisord start (default: true)
+;startsecs=1                   ; # of secs prog must stay up to be running (def. 1)
+;startretries=3                ; max # of serial start failures when starting (default 3)
+;autorestart=unexpected        ; when to restart if exited after running (def: unexpected)
+;exitcodes=0,2                 ; '</span>expected<span class="token string">' exit codes used with autorestart (default 0,2)
+;stopsignal=QUIT               ; signal used to kill process (default TERM)
+;stopwaitsecs=10               ; max num secs to wait b4 SIGKILL (default 10)
+;stopasgroup=false             ; send stop signal to the UNIX process group (default false)
+;killasgroup=false             ; SIGKILL the UNIX process group (def false)
+;user=chrism                   ; setuid to this UNIX account to run the program
+;redirect_stderr=true          ; redirect proc stderr to stdout (default false)
+;stdout_logfile=/a/path        ; stdout log path, NONE for none; default AUTO
+;stdout_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)
+;stdout_logfile_backups=10     ; # of stdout logfile backups (0 means none, default 10)
+;stdout_capture_maxbytes=1MB   ; number of bytes in '</span>capturemode<span class="token string">' (default 0)
+;stdout_events_enabled=false   ; emit events on stdout writes (default false)
+;stderr_logfile=/a/path        ; stderr log path, NONE for none; default AUTO
+;stderr_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)
+;stderr_logfile_backups=10     ; # of stderr logfile backups (0 means none, default 10)
+;stderr_capture_maxbytes=1MB   ; number of bytes in '</span>capturemode<span class="token string">' (default 0)
+;stderr_events_enabled=false   ; emit events on stderr writes (default false)
+;environment=A=&quot;1&quot;,B=&quot;2&quot;       ; process environment additions (def no adds)
+;serverurl=AUTO                ; override serverurl computation (childutils)
+ 
+; The sample eventlistener section below shows all possible eventlistener
+; subsection values.  Create one or more '</span>real<span class="token string">' eventlistener: sections to be
+; able to handle event notifications sent by supervisord.
+ 
+;[eventlistener:theeventlistenername]
+;command=/bin/eventlistener    ; the program (relative uses PATH, can take args)
+;process_name=%(program_name)s ; process_name expr (default %(program_name)s)
+;numprocs=1                    ; number of processes copies to start (def 1)
+;events=EVENT                  ; event notif. types to subscribe to (req'</span>d<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">buffer_size</span><span class="token operator">=</span><span class="token number">10</span>                <span class="token punctuation">;</span> event buffer queue size <span class="token punctuation">(</span>default <span class="token number">10</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">directory</span><span class="token operator">=</span>/tmp                <span class="token punctuation">;</span> directory to cwd to before <span class="token builtin class-name">exec</span> <span class="token punctuation">(</span>def no cwd<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">umask</span><span class="token operator">=</span>022                     <span class="token punctuation">;</span> <span class="token builtin class-name">umask</span> <span class="token keyword">for</span> process <span class="token punctuation">(</span>default None<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">priority</span><span class="token operator">=</span>-1                   <span class="token punctuation">;</span> the relative start priority <span class="token punctuation">(</span>default -1<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">autostart</span><span class="token operator">=</span>true                <span class="token punctuation">;</span> start at supervisord start <span class="token punctuation">(</span>default: <span class="token boolean">true</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">startsecs</span><span class="token operator">=</span><span class="token number">1</span>                   <span class="token punctuation">;</span> <span class="token comment"># of secs prog must stay up to be running (def. 1)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">startretries</span><span class="token operator">=</span><span class="token number">3</span>                <span class="token punctuation">;</span> max <span class="token comment"># of serial start failures when starting (default 3)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">autorestart</span><span class="token operator">=</span>unexpected        <span class="token punctuation">;</span> autorestart <span class="token keyword">if</span> exited after running <span class="token punctuation">(</span>def: unexpected<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">exitcodes</span><span class="token operator">=</span><span class="token number">0,2</span>                 <span class="token punctuation">;</span> <span class="token string">'expected'</span> <span class="token builtin class-name">exit</span> codes used with autorestart <span class="token punctuation">(</span>default <span class="token number">0,2</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stopsignal</span><span class="token operator">=</span>QUIT               <span class="token punctuation">;</span> signal used to <span class="token function">kill</span> process <span class="token punctuation">(</span>default <span class="token environment constant">TERM</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stopwaitsecs</span><span class="token operator">=</span><span class="token number">10</span>               <span class="token punctuation">;</span> max num secs to <span class="token function">wait</span> b4 SIGKILL <span class="token punctuation">(</span>default <span class="token number">10</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stopasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> send stop signal to the UNIX process group <span class="token punctuation">(</span>default <span class="token boolean">false</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">killasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> SIGKILL the UNIX process group <span class="token punctuation">(</span>def <span class="token boolean">false</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">user</span><span class="token operator">=</span>chrism                   <span class="token punctuation">;</span> setuid to this UNIX account to run the program
+<span class="token punctuation">;</span><span class="token assign-left variable">redirect_stderr</span><span class="token operator">=</span>false         <span class="token punctuation">;</span> <span class="token assign-left variable">redirect_stderr</span><span class="token operator">=</span>true is not allowed <span class="token keyword">for</span> eventlisteners
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> stdout log path, NONE <span class="token keyword">for</span> none<span class="token punctuation">;</span> default AUTO
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> max <span class="token comment"># logfile bytes b4 rotation (default 50MB)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>     <span class="token punctuation">;</span> <span class="token comment"># of stdout logfile backups (0 means none, default 10)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> emit events on stdout writes <span class="token punctuation">(</span>default <span class="token boolean">false</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> stderr log path, NONE <span class="token keyword">for</span> none<span class="token punctuation">;</span> default AUTO
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> max <span class="token comment"># logfile bytes b4 rotation (default 50MB)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>     <span class="token punctuation">;</span> <span class="token comment"># of stderr logfile backups (0 means none, default 10)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> emit events on stderr writes <span class="token punctuation">(</span>default <span class="token boolean">false</span><span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">environment</span><span class="token operator">=</span>A<span class="token operator">=</span><span class="token string">&quot;1&quot;</span>,B<span class="token operator">=</span><span class="token string">&quot;2&quot;</span>       <span class="token punctuation">;</span> process environment additions
+<span class="token punctuation">;</span><span class="token assign-left variable">serverurl</span><span class="token operator">=</span>AUTO                <span class="token punctuation">;</span> override serverurl computation <span class="token punctuation">(</span>childutils<span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span> The sample group section below shows all possible group values.  Create one
+<span class="token punctuation">;</span> or <span class="token function">more</span> <span class="token string">'real'</span> group: sections to create <span class="token string">&quot;heterogeneous&quot;</span> process groups.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>group:thegroupname<span class="token punctuation">]</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">programs</span><span class="token operator">=</span>progname1,progname2  <span class="token punctuation">;</span> each refers to <span class="token string">'x'</span> <span class="token keyword">in</span> <span class="token punctuation">[</span>program:x<span class="token punctuation">]</span> definitions
+<span class="token punctuation">;</span><span class="token assign-left variable">priority</span><span class="token operator">=</span><span class="token number">999</span>                  <span class="token punctuation">;</span> the relative start priority <span class="token punctuation">(</span>default <span class="token number">999</span><span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span> The <span class="token punctuation">[</span>include<span class="token punctuation">]</span> section can just contain the <span class="token string">&quot;files&quot;</span> setting.  This
+<span class="token punctuation">;</span> setting can list multiple files <span class="token punctuation">(</span>separated by whitespace or
+<span class="token punctuation">;</span> newlines<span class="token punctuation">)</span>.  It can also contain wildcards.  The filenames are
+<span class="token punctuation">;</span> interpreted as relative to this file.  Included files *cannot*
+<span class="token punctuation">;</span> include files themselves.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>include<span class="token punctuation">]</span>
+<span class="token punctuation">;</span>files <span class="token operator">=</span> relative/directory/*.ini
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br></div></div><h2 id="_3-创建主配置。"><a href="#_3-创建主配置。" class="header-anchor">#</a> 3，创建主配置。</h2> <p>1，创建 supervisor 配置文件目录 。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">mkdir</span> -m <span class="token number">755</span> -p /etc/supervisor
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>2，创建主配置文件。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code>echo_supervisord_conf <span class="token operator">&gt;</span>/etc/supervisor/supervisord.conf
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>3，创建项目配置文件目录。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">mkdir</span> -m <span class="token number">755</span> /etc/supervisor/conf.d
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>配置文件的详细解析放在最后。</p> <p><img src="https://tva3.sinaimg.cn/large/008k1Yt0ly1gs32gypkfhj30j60r07wh.jpg" alt="image"></p> <h2 id="_4-配置管理-tomcat-进程。"><a href="#_4-配置管理-tomcat-进程。" class="header-anchor">#</a> 4，配置管理 tomcat 进程。</h2> <p>主机上安装的 tomcat 进程，无论怎么操作都无法开机自启动，那么现在有了这个进程管理工具，就可以实现对 tomcat 进程的管理了。</p> <p>进程管理配置参数，不建议全都写在<code>supervisord.conf</code>文件中，应该每个进程写一个配置文件放在 include 指定的目录下包含进 supervisord.conf 文件中。</p> <p>所以此时应该先修改一下这个参数：</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">vim</span> /etc/supervisor/supervisord.conf
+ 
+直接跳到文本最后，删掉前边的注释（分号）。然后更改如下：
+ 
+<span class="token punctuation">[</span>include<span class="token punctuation">]</span>
+files <span class="token operator">=</span> /etc/supervisor/conf.d/*.ini
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br></div></div><p>然后创建 tomcat 的配置文件。</p> <p>需要注意的地方 ====》所有要管理的进程都不能开启后台模式，只能使用前台模式进行配置；使用后台模式会出现一直重新开启新进程的情况。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>root@fbtest conf.d<span class="token punctuation">]</span><span class="token variable">$cat</span> tomcat.ini
+<span class="token punctuation">[</span>program:tomcat<span class="token punctuation">]</span>
+<span class="token assign-left variable">command</span><span class="token operator">=</span>/usr/local/tomcat/bin/catalina.sh run
+<span class="token assign-left variable">stdout_logfile</span><span class="token operator">=</span>/usr/local/tomcat/logs/catalina.out
+<span class="token assign-left variable">stderr_logfile</span><span class="token operator">=</span>/usr/local/tomcat/logs/catalina.out
+<span class="token assign-left variable">environment</span><span class="token operator">=</span>JAVA_HOME<span class="token operator">=</span><span class="token string">&quot;/usr/local/jdk1.8.0_144&quot;</span>,JAVA_BIN<span class="token operator">=</span><span class="token string">&quot;/usr/local/jdk1.8.0_144/bin&quot;</span>
+<span class="token assign-left variable">autorestart</span><span class="token operator">=</span>false
+<span class="token assign-left variable">startsecs</span><span class="token operator">=</span><span class="token number">60</span>
+<span class="token assign-left variable">priority</span><span class="token operator">=</span><span class="token number">1</span>
+<span class="token assign-left variable">stopasgroup</span><span class="token operator">=</span>true
+<span class="token assign-left variable">killasgroup</span><span class="token operator">=</span>true
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br></div></div><p>注意：我当时写 tomcat 启动命令的时候，使用了 / usr/local/tomcat_adminB/bin/startup.sh 这个命令，结果发现，不知道什么原因，竟然会一次启动四个 tomcat 进程，也是挺诡异的。
+还有，因为使用<code>catalina.sh run</code>的方式启动是一种前台的启动方式，因此日志并不会输出到对应的 tomcat 日志里，当中有两句定义日志的指令，其中生效的是<code>stderr_logfile</code>，也就是说，是这条指令，使得尽管我们在前台启动的 tomcat 应用，依然会将日志输出到<code>catalina.out</code>里边。</p> <p>还可以创建一个管理 nginx 的配置文件（也是要关闭后台模式，在执行的命令后面添加 - g “daemon off;”）。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>root@fbtest conf.d<span class="token punctuation">]</span><span class="token variable">$cat</span> nginx.ini
+<span class="token punctuation">[</span>program:nginx<span class="token punctuation">]</span>
+<span class="token assign-left variable">command</span><span class="token operator">=</span>/usr/local/nginx/sbin/nginx -g <span class="token string">'daemon off;'</span>
+<span class="token assign-left variable">priority</span><span class="token operator">=</span><span class="token number">1000</span>
+<span class="token assign-left variable">autostart</span><span class="token operator">=</span>true
+<span class="token assign-left variable">startretries</span><span class="token operator">=</span><span class="token number">3</span>
+<span class="token assign-left variable">autorestart</span><span class="token operator">=</span>true
+<span class="token assign-left variable">user</span><span class="token operator">=</span>root
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><p>还可以创建更多的管理服务的文件，这些配置依据文末的讲解，都可以非常容易的配置出来，不过有一些属性则需要自己去进行调试，然后来适应实际的工作需求，比如我在配置 tomcat 的配置时，就把自动重启的功能给关闭了，因为在测试环境需要经常发布，发布就免不了重启服务，如果这个地方开启自动重启，那么很容易会在发布的时候出现各种意想不到的情况。</p> <h2 id="_5-启动-supervisor。"><a href="#_5-启动-supervisor。" class="header-anchor">#</a> 5，启动 supervisor。</h2> <p>通过启动命令加载配置文件。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code>supervisord -c /etc/supervisor/supervisord.conf
+<span class="token punctuation">[</span>root@moban ~<span class="token punctuation">]</span><span class="token variable">$supervisorctl</span>
+tomcat                           FATAL     Exited too quickly <span class="token punctuation">(</span>process log may have details<span class="token punctuation">)</span>
+supervisor<span class="token operator">&gt;</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>如果此时报错，那么 google 一下报的错误，很容易解决。</p> <p>以上两个命令说明：</p> <ul><li><code>supervisord</code> : supervisor 的服务器端部分，用于 supervisor 启动。</li> <li><code>supervisorctl</code>：启动 supervisor 的命令行窗口，在该命令行中可执行 start、stop、status、reload 等操作。</li></ul> <p>注意：每次修改配置文件后需进入 supervisorctl，执行 reload， 改动部分才能生效。</p> <h3 id="_1-创建-supervisor-服务管理文件。"><a href="#_1-创建-supervisor-服务管理文件。" class="header-anchor">#</a> 1，创建 supervisor 服务管理文件。</h3> <p>此时可以通过查看 tomcat 的日志，来判断，是否启动成功，也可以通过重启服务器，来检验，是否生效。</p> <p>估计重启服务器还不行，因为还没有添加 supervisor 进程的开机自启。</p> <p>这个地方因为 CentOS 版本升级之后对服务的管理方式不同，因此创建的方式也不一样，我这里分别列出来。</p> <p>1，如果是 CentOS-7。</p> <p>进入 / lib/systemd/system 目录，并创建 supervisord.service 文件。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>root@moban ~<span class="token punctuation">]</span><span class="token variable">$cat</span> /lib/systemd/system/supervisord.service
+ 
+<span class="token punctuation">[</span>Unit<span class="token punctuation">]</span>
+<span class="token assign-left variable">Description</span><span class="token operator">=</span>supervisord
+<span class="token assign-left variable">After</span><span class="token operator">=</span>network.target
+ 
+<span class="token punctuation">[</span>Service<span class="token punctuation">]</span>
+<span class="token assign-left variable">Type</span><span class="token operator">=</span>forking
+<span class="token assign-left variable">ExecStart</span><span class="token operator">=</span>/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+<span class="token assign-left variable">ExecStop</span><span class="token operator">=</span>/usr/bin/supervisorctl <span class="token variable">$OPTIONS</span> <span class="token function">shutdown</span>
+<span class="token assign-left variable">ExecReload</span><span class="token operator">=</span>/usr/bin/supervisorctl <span class="token variable">$OPTIONS</span> reload
+<span class="token assign-left variable">KillMode</span><span class="token operator">=</span>process
+<span class="token assign-left variable">Restart</span><span class="token operator">=</span>on-failure
+<span class="token assign-left variable">RestartSec</span><span class="token operator">=</span>42s
+ 
+<span class="token punctuation">[</span>Install<span class="token punctuation">]</span>
+<span class="token assign-left variable">WantedBy</span><span class="token operator">=</span>multi-user.target
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br></div></div><p>2，如果是 CenOS6。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>root@moban ~<span class="token punctuation">]</span><span class="token variable">$cat</span>  /etc/rc.d/init.d/supervisord
+ 
+<span class="token comment">#!/bin/bash</span>
+<span class="token comment">#</span>
+<span class="token comment"># supervisord   This scripts turns supervisord on</span>
+<span class="token comment">#</span>
+<span class="token comment"># Author:       Mike McGrath &lt;mmcgrath@redhat.com&gt; (based off yumupdatesd)</span>
+<span class="token comment">#</span>
+<span class="token comment"># chkconfig:    - 95 04</span>
+<span class="token comment">#</span>
+<span class="token comment"># description:  supervisor is a process control utility.  It has a web based</span>
+<span class="token comment">#               xmlrpc interface as well as a few other nifty features.</span>
+<span class="token comment"># processname:  supervisord</span>
+<span class="token comment"># config: /etc/supervisord.conf</span>
+<span class="token comment"># pidfile: /var/run/supervisord.pid</span>
+<span class="token comment">#</span>
+ 
+<span class="token comment"># source function library</span>
+<span class="token builtin class-name">.</span> /etc/rc.d/init.d/functions
+ 
+<span class="token assign-left variable">RETVAL</span><span class="token operator">=</span><span class="token number">0</span>
+ 
+<span class="token function-name function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin class-name">echo</span> -n $<span class="token string">&quot;Starting supervisord: &quot;</span>
+    daemon <span class="token string">&quot;supervisord -c /etc/supervisor/supervisord.conf&quot;</span>
+    <span class="token assign-left variable">RETVAL</span><span class="token operator">=</span><span class="token variable">$?</span>
+    <span class="token builtin class-name">echo</span>
+    <span class="token punctuation">[</span> <span class="token variable">$RETVAL</span> -eq <span class="token number">0</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token function">touch</span> /var/lock/subsys/supervisord
+<span class="token punctuation">}</span>
+ 
+<span class="token function-name function">stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin class-name">echo</span> -n $<span class="token string">&quot;Stopping supervisord: &quot;</span>
+    killproc supervisord
+    <span class="token builtin class-name">echo</span>
+    <span class="token punctuation">[</span> <span class="token variable">$RETVAL</span> -eq <span class="token number">0</span> <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> <span class="token function">rm</span> -f /var/lock/subsys/supervisord
+<span class="token punctuation">}</span>
+ 
+<span class="token function-name function">restart</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    stop
+    start
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">case</span> <span class="token string">&quot;<span class="token variable">$1</span>&quot;</span> <span class="token keyword">in</span>
+  start<span class="token punctuation">)</span>
+    start
+    <span class="token punctuation">;</span><span class="token punctuation">;</span>
+  stop<span class="token punctuation">)</span>
+    stop
+    <span class="token punctuation">;</span><span class="token punctuation">;</span>
+  restart<span class="token operator">|</span>force-reload<span class="token operator">|</span>reload<span class="token punctuation">)</span>
+    restart
+    <span class="token punctuation">;</span><span class="token punctuation">;</span>
+  condrestart<span class="token punctuation">)</span>
+    <span class="token punctuation">[</span> -f /var/lock/subsys/supervisord <span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> restart
+    <span class="token punctuation">;</span><span class="token punctuation">;</span>
+  status<span class="token punctuation">)</span>
+    status supervisord
+    <span class="token assign-left variable">RETVAL</span><span class="token operator">=</span><span class="token variable">$?</span>
+    <span class="token punctuation">;</span><span class="token punctuation">;</span>
+  *<span class="token punctuation">)</span>
+    <span class="token builtin class-name">echo</span> $<span class="token string">&quot;Usage: <span class="token variable">$0</span> {start|stop|status|restart|reload|force-reload|condrestart}&quot;</span>
+    <span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">esac</span>
+ 
+<span class="token builtin class-name">exit</span> <span class="token variable">$RETVAL</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br></div></div><h3 id="_2-加入开机自启。"><a href="#_2-加入开机自启。" class="header-anchor">#</a> 2，加入开机自启。</h3> <p>1，如果是 CentOS-7。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">chmod</span> <span class="token number">766</span> /lib/systemd/system/supervisord.service
+systemctl daemon-reload
+systemctl <span class="token builtin class-name">enable</span> supervisord.service
+systemctl start supervisord
+systemctl status supervisord
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br></div></div><p>2，如果是 CenOS6。</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">chkconfig</span> supervisord on
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><h2 id="_6-开启-web-管理。"><a href="#_6-开启-web-管理。" class="header-anchor">#</a> 6，开启 web 管理。</h2> <p>一般情况都是使用 supervisorctl 在命令行进行管理，不过也可以玩一下开启 web 管理，然后再关掉就好了。</p> <p>编辑配置文件：</p> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token function">vim</span> /etc/supervisor/supervisord.conf
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>         <span class="token punctuation">;</span> inet <span class="token punctuation">(</span>TCP<span class="token punctuation">)</span> server disabled by default
+<span class="token punctuation">;</span><span class="token assign-left variable">port</span><span class="token operator">=</span><span class="token number">127.0</span>.0.1:9001        <span class="token punctuation">;</span> <span class="token punctuation">(</span>ip_address:port specifier, *:port <span class="token keyword">for</span> all iface<span class="token punctuation">)</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> <span class="token punctuation">(</span>default is no username <span class="token punctuation">(</span>open server<span class="token punctuation">))</span>
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> <span class="token punctuation">(</span>default is no password <span class="token punctuation">(</span>open server<span class="token punctuation">))</span>
+ 
+修改成：
+ 
+<span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>         <span class="token punctuation">;</span> inet <span class="token punctuation">(</span>TCP<span class="token punctuation">)</span> server disabled by default
+<span class="token assign-left variable">port</span><span class="token operator">=</span><span class="token number">192.168</span>.157.182:9001          <span class="token punctuation">;</span> <span class="token punctuation">(</span>ip_address:port specifier, *:port <span class="token keyword">for</span> all iface<span class="token punctuation">)</span>
+<span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> <span class="token punctuation">(</span>default is no username <span class="token punctuation">(</span>open server<span class="token punctuation">))</span>
+<span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> <span class="token punctuation">(</span>default is no password <span class="token punctuation">(</span>open server<span class="token punctuation">))</span>
+ 
+port：绑定访问IP和端口，这里是绑定的是本机IP和9001端口（写上你自己的服务器IP或是本地IP）
+username：登录管理后台的用户名
+password：登录管理后台的密码
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br></div></div><p>访问一下：</p> <p><img src="https://tva1.sinaimg.cn/large/008k1Yt0ly1gs32h89dh2j314v0d1qc2.jpg" alt="image"></p> <h2 id="_7-配置文件详解。"><a href="#_7-配置文件详解。" class="header-anchor">#</a> 7，配置文件详解。</h2> <div class="language-sh line-numbers-mode"><pre class="language-sh"><code><span class="token punctuation">[</span>unix_http_server<span class="token punctuation">]</span>            
+ 
+<span class="token assign-left variable">file</span><span class="token operator">=</span>/tmp/supervisor.sock   <span class="token punctuation">;</span> socket文件的路径，supervisorctl用XML_RPC和supervisord通信就是通过它进行
+ 
+                              的。如果不设置的话，supervisorctl也就不能用了  
+ 
+                              不设置的话，默认为none。 非必须设置        
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">chmod</span><span class="token operator">=</span>0700                 <span class="token punctuation">;</span> 这个简单，就是修改上面的那个socket文件的权限为0700
+ 
+                              不设置的话，默认为0700。 非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">chown</span><span class="token operator">=</span>nobody:nogroup       <span class="token punctuation">;</span> 这个一样，修改上面的那个socket文件的属组为user.group
+ 
+                              不设置的话，默认为启动supervisord进程的用户及属组。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> 使用supervisorctl连接的时候，认证的用户
+ 
+                               不设置的话，默认为不需要用户。 非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> 和上面的用户名对应的密码，可以直接使用明码，也可以使用SHA加密
+ 
+                              如：<span class="token punctuation">{</span>SHA<span class="token punctuation">}</span>82ab876d1387bfafe46cc1c8a2ef074eae50cb1d
+ 
+                              默认不设置。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>         <span class="token punctuation">;</span> 侦听在TCP上的socket，Web Server和远程的supervisorctl都要用到他
+ 
+                              不设置的话，默认为不开启。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">port</span><span class="token operator">=</span><span class="token number">127.0</span>.0.1:9001        <span class="token punctuation">;</span> 这个是侦听的IP和端口，侦听所有IP用 :9001或*:9001。
+ 
+                              这个必须设置，只要上面的<span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>开启了，就必须设置它
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>user              <span class="token punctuation">;</span> 这个和上面的uinx_http_server一个样。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>               <span class="token punctuation">;</span> 这个也一个样。非必须设置
+ 
+<span class="token punctuation">[</span>supervisord<span class="token punctuation">]</span>                <span class="token punctuation">;</span>这个主要是定义supervisord这个服务端进程的一些参数的
+ 
+                              这个必须设置，不设置，supervisor就不用干活了
+ 
+<span class="token assign-left variable">logfile</span><span class="token operator">=</span>/tmp/supervisord.log <span class="token punctuation">;</span> 这个是supervisord这个主进程的日志路径，注意和子进程的日志不搭嘎。
+ 
+                               默认路径<span class="token variable">$CWD</span>/supervisord.log，<span class="token variable">$CWD</span>是当前目录。。非必须设置
+ 
+<span class="token assign-left variable">logfile_maxbytes</span><span class="token operator">=</span>50MB        <span class="token punctuation">;</span> 这个是上面那个日志文件的最大的大小，当超过50M的时候，会生成一个新的日 
+ 
+                               志文件。当设置为0时，表示不限制文件大小
+ 
+                               默认值是50M，非必须设置。              
+ 
+<span class="token assign-left variable">logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>           <span class="token punctuation">;</span> 日志文件保持的数量，上面的日志文件大于50M时，就会生成一个新文件。文件
+ 
+                               数量大于10时，最初的老文件被新文件覆盖，文件数量将保持为10
+ 
+                               当设置为0时，表示不限制文件的数量。
+ 
+                               默认情况下为10。。。非必须设置
+ 
+<span class="token assign-left variable">loglevel</span><span class="token operator">=</span>info                <span class="token punctuation">;</span> 日志级别，有critical, error, warn, info, debug, trace, or blather等
+ 
+                               默认为info。。。非必须设置项
+ 
+<span class="token assign-left variable">pidfile</span><span class="token operator">=</span>/tmp/supervisord.pid <span class="token punctuation">;</span> supervisord的pid文件路径。
+ 
+                               默认为<span class="token variable">$CWD</span>/supervisord.pid。。。非必须设置
+ 
+<span class="token assign-left variable">nodaemon</span><span class="token operator">=</span>false               <span class="token punctuation">;</span> 如果是true，supervisord进程将在前台运行
+ 
+                               默认为false，也就是后台以守护进程运行。。。非必须设置
+ 
+<span class="token assign-left variable">minfds</span><span class="token operator">=</span><span class="token number">1024</span>                  <span class="token punctuation">;</span> 这个是最少系统空闲的文件描述符，低于这个值supervisor将不会启动。
+ 
+                               系统的文件描述符在这里设置cat /proc/sys/fs/file-max
+ 
+                               默认情况下为1024。。。非必须设置
+ 
+<span class="token assign-left variable">minprocs</span><span class="token operator">=</span><span class="token number">200</span>                 <span class="token punctuation">;</span> 最小可用的进程描述符，低于这个值supervisor也将不会正常启动。
+ 
+                              <span class="token builtin class-name">ulimit</span>  -u这个命令，可以查看linux下面用户的最大进程数
+ 
+                              默认为200。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">umask</span><span class="token operator">=</span>022                   <span class="token punctuation">;</span> 进程创建文件的掩码
+ 
+                               默认为022。。非必须设置项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">user</span><span class="token operator">=</span>chrism                 <span class="token punctuation">;</span> 这个参数可以设置一个非root用户，当我们以root用户启动supervisord之后。
+ 
+                               我这里面设置的这个用户，也可以对supervisord进行管理
+ 
+                               默认情况是不设置。。。非必须设置项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">identifier</span><span class="token operator">=</span>supervisor       <span class="token punctuation">;</span> 这个参数是supervisord的标识符，主要是给XML_RPC用的。当你有多个
+ 
+                               supervisor的时候，而且想调用XML_RPC统一管理，就需要为每个
+ 
+                               supervisor设置不同的标识符了
+ 
+                               默认是supervisord。。。非必需设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">directory</span><span class="token operator">=</span>/tmp              <span class="token punctuation">;</span> 这个参数是当supervisord作为守护进程运行的时候，设置这个参数的话，启动
+ 
+                               supervisord进程之前，会先切换到这个目录
+ 
+                               默认不设置。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">nocleanup</span><span class="token operator">=</span>true              <span class="token punctuation">;</span> 这个参数当为false的时候，会在supervisord进程启动的时候，把以前子进程
+ 
+                               产生的日志文件<span class="token punctuation">(</span>路径为AUTO的情况下<span class="token punctuation">)</span>清除掉。有时候咱们想要看历史日志，当 
+ 
+                               然不想日志被清除了。所以可以设置为true
+ 
+                               默认是false，有调试需求的同学可以设置为true。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">childlogdir</span><span class="token operator">=</span>/tmp            <span class="token punctuation">;</span> 当子进程日志路径为AUTO的时候，子进程日志文件的存放路径。
+ 
+                               默认路径是这个东西，执行下面的这个命令看看就OK了，处理的东西就默认路径
+ 
+                               python -c <span class="token string">&quot;import tempfile;print tempfile.gettempdir()&quot;</span>
+ 
+                               非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">environment</span><span class="token operator">=</span>KEY<span class="token operator">=</span><span class="token string">&quot;value&quot;</span>     <span class="token punctuation">;</span> 这个是用来设置环境变量的，supervisord在linux中启动默认继承了linux的
+ 
+                               环境变量，在这里可以设置supervisord进程特有的其他环境变量。
+ 
+                               supervisord启动子进程时，子进程会拷贝父进程的内存空间内容。 所以设置的
+ 
+                               这些环境变量也会被子进程继承。
+ 
+                               小例子：environment<span class="token operator">=</span>name<span class="token operator">=</span><span class="token string">&quot;haha&quot;</span>,age<span class="token operator">=</span><span class="token string">&quot;hehe&quot;</span>
+ 
+                               默认为不设置。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">strip_ansi</span><span class="token operator">=</span>false            <span class="token punctuation">;</span> 这个选项如果设置为true，会清除子进程日志中的所有ANSI 序列。什么是ANSI
+ 
+                               序列呢？就是我们的<span class="token punctuation">\</span>n,<span class="token punctuation">\</span>t这些东西。
+ 
+                               默认为false。。。非必须设置
+ 
+<span class="token punctuation">;</span> the below section must remain <span class="token keyword">in</span> the config <span class="token function">file</span> <span class="token keyword">for</span> RPC
+ 
+<span class="token punctuation">;</span> <span class="token punctuation">(</span>supervisorctl/web interface<span class="token punctuation">)</span> to work, additional interfaces may be
+ 
+<span class="token punctuation">;</span> added by defining them <span class="token keyword">in</span> separate rpcinterface: sections
+ 
+<span class="token punctuation">[</span>rpcinterface:supervisor<span class="token punctuation">]</span>    <span class="token punctuation">;</span>这个选项是给XML_RPC用的，当然你如果想使用supervisord或者web server 这 
+ 
+                              个选项必须要开启的
+ 
+supervisor.rpcinterface_factory <span class="token operator">=</span> supervisor.rpcinterface:make_main_rpcinterface 
+ 
+<span class="token punctuation">[</span>supervisorctl<span class="token punctuation">]</span>              <span class="token punctuation">;</span>这个主要是针对supervisorctl的一些配置  
+ 
+<span class="token assign-left variable">serverurl</span><span class="token operator">=</span>unix:///tmp/supervisor.sock <span class="token punctuation">;</span> 这个是supervisorctl本地连接supervisord的时候，本地UNIX socket
+ 
+                                        路径，注意这个是和前面的<span class="token punctuation">[</span>unix_http_server<span class="token punctuation">]</span>对应的
+ 
+                                        默认值就是unix:///tmp/supervisor.sock。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">serverurl</span><span class="token operator">=</span>http://127.0.0.1:9001 <span class="token punctuation">;</span> 这个是supervisorctl远程连接supervisord的时候，用到的TCP socket路径
+ 
+                                   注意这个和前面的<span class="token punctuation">[</span>inet_http_server<span class="token punctuation">]</span>对应
+ 
+                                   默认就是http://127.0.0.1:9001。。。非必须项
+ 
+ 
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">username</span><span class="token operator">=</span>chris              <span class="token punctuation">;</span> 用户名
+ 
+                               默认空。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">password</span><span class="token operator">=</span><span class="token number">123</span>                <span class="token punctuation">;</span> 密码
+ 
+                              默认空。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">prompt</span><span class="token operator">=</span>mysupervisor         <span class="token punctuation">;</span> 输入用户名密码时候的提示符
+ 
+                               默认supervisor。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">history_file</span><span class="token operator">=~</span>/.sc_history  <span class="token punctuation">;</span> 这个参数和shell中的history类似，我们可以用上下键来查找前面执行过的命令
+ 
+                               默认是no file的。。所以我们想要有这种功能，必须指定一个文件。。。非
+ 
+                               必须设置
+ 
+<span class="token punctuation">;</span> The below sample program section shows all possible program subsection values,
+ 
+<span class="token punctuation">;</span> create one or <span class="token function">more</span> <span class="token string">'real'</span> program: sections to be able to control them under
+ 
+<span class="token punctuation">;</span> supervisor.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>program:theprogramname<span class="token punctuation">]</span>      <span class="token punctuation">;</span>这个就是咱们要管理的子进程了，<span class="token string">&quot;:&quot;</span>后面的是名字，最好别乱写和实际进程
+ 
+                                有点关联最好。这样的program我们可以设置一个或多个，一个program就是
+ 
+                                要被管理的一个进程
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">command</span><span class="token operator">=</span>/bin/cat              <span class="token punctuation">;</span> 这个就是我们的要启动进程的命令路径了，可以带参数
+ 
+                                例子：/home/test.py -a <span class="token string">'hehe'</span>
+ 
+                                有一点需要注意的是，我们的command只能是那种在终端运行的进程，不能是
+ 
+                                守护进程。这个想想也知道了，比如说command<span class="token operator">=</span>service httpd start。
+ 
+                                httpd这个进程被linux的service管理了，我们的supervisor再去启动这个命令
+ 
+                                这已经不是严格意义的子进程了。
+ 
+                                这个是个必须设置的项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">process_name</span><span class="token operator">=</span>%<span class="token punctuation">(</span>program_name<span class="token punctuation">)</span>s <span class="token punctuation">;</span> 这个是进程名，如果我们下面的numprocs参数为1的话，就不用管这个参数
+ 
+                                 了，它默认值%<span class="token punctuation">(</span>program_name<span class="token punctuation">)</span>s也就是上面的那个program冒号后面的名字，
+ 
+                                 但是如果numprocs为多个的话，那就不能这么干了。想想也知道，不可能每个
+ 
+                                 进程都用同一个进程名吧。
+ 
+ 
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">numprocs</span><span class="token operator">=</span><span class="token number">1</span>                    <span class="token punctuation">;</span> 启动进程的数目。当不为1时，就是进程池的概念，注意process_name的设置
+ 
+                                 默认为1    。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">directory</span><span class="token operator">=</span>/tmp                <span class="token punctuation">;</span> 进程运行前，会前切换到这个目录
+ 
+                                 默认不设置。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">umask</span><span class="token operator">=</span>022                     <span class="token punctuation">;</span> 进程掩码，默认none，非必须
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">priority</span><span class="token operator">=</span><span class="token number">999</span>                  <span class="token punctuation">;</span> 子进程启动关闭优先级，优先级低的，最先启动，关闭的时候最后关闭
+ 
+                                 默认值为999 。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">autostart</span><span class="token operator">=</span>true                <span class="token punctuation">;</span> 如果是true的话，子进程将在supervisord启动后被自动启动
+ 
+                                 默认就是true   。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">autorestart</span><span class="token operator">=</span>unexpected        <span class="token punctuation">;</span> 这个是设置子进程挂掉后自动重启的情况，有三个选项，false,unexpected
+ 
+                                 和true。如果为false的时候，无论什么情况下，都不会被重新启动，
+ 
+                                 如果为unexpected，只有当进程的退出码不在下面的exitcodes里面定义的退 
+ 
+                                 出码的时候，才会被自动重启。当为true的时候，只要子进程挂掉，将会被无
+ 
+                                 条件的重启
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">startsecs</span><span class="token operator">=</span><span class="token number">1</span>                   <span class="token punctuation">;</span> 这个选项是子进程启动多少秒之后，此时状态如果是running，则我们认为启
+ 
+                                 动成功了
+ 
+                                 默认值为1 。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">startretries</span><span class="token operator">=</span><span class="token number">3</span>                <span class="token punctuation">;</span> 当进程启动失败后，最大尝试启动的次数。。当超过3次后，supervisor将把
+ 
+                                 此进程的状态置为FAIL
+ 
+                                 默认值为3 。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">exitcodes</span><span class="token operator">=</span><span class="token number">0,2</span>                 <span class="token punctuation">;</span> 注意和上面的的autorestart<span class="token operator">=</span>unexpected对应。。exitcodes里面的定义的
+ 
+                                 退出码是expected的。
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopsignal</span><span class="token operator">=</span>QUIT               <span class="token punctuation">;</span> 进程停止信号，可以为<span class="token environment constant">TERM</span>, HUP, INT, QUIT, KILL, USR1, or USR2等信号
+ 
+                                  默认为<span class="token environment constant">TERM</span> 。。当用设定的信号去干掉进程，退出码会被认为是expected
+ 
+                                  非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopwaitsecs</span><span class="token operator">=</span><span class="token number">10</span>               <span class="token punctuation">;</span> 这个是当我们向子进程发送stopsignal信号后，到系统返回信息
+ 
+                                 给supervisord，所等待的最大时间。 超过这个时间，supervisord会向该
+ 
+                                 子进程发送一个强制kill的信号。
+ 
+                                 默认为10秒。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> 这个东西主要用于，supervisord管理的子进程，这个子进程本身还有
+ 
+                                 子进程。那么我们如果仅仅干掉supervisord的子进程的话，子进程的子进程
+ 
+                                 有可能会变成孤儿进程。所以咱们可以设置可个选项，把整个该子进程的
+ 
+                                 整个进程组都干掉。 设置为true的话，一般killasgroup也会被设置为true。
+ 
+                                 需要注意的是，该选项发送的是stop信号
+ 
+                                 默认为false。。非必须设置。。
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">killasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> 这个和上面的stopasgroup类似，不过发送的是kill信号
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">user</span><span class="token operator">=</span>chrism                   <span class="token punctuation">;</span> 如果supervisord是root启动，我们在这里设置这个非root用户，可以用来
+ 
+                                 管理该program
+ 
+                                 默认不设置。。。非必须设置项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">redirect_stderr</span><span class="token operator">=</span>true          <span class="token punctuation">;</span> 如果为true，则stderr的日志会被写入stdout日志文件中
+ 
+                                 默认为false，非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> 子进程的stdout的日志路径，可以指定路径，AUTO，none等三个选项。
+ 
+                                 设置为none的话，将没有日志产生。设置为AUTO的话，将随机找一个地方
+ 
+                                 生成日志文件，而且当supervisord重新启动的时候，以前的日志文件会被
+ 
+                                 清空。当 <span class="token assign-left variable">redirect_stderr</span><span class="token operator">=</span>true的时候，sterr也会写进这个日志文件
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 日志文件最大大小，和<span class="token punctuation">[</span>supervisord<span class="token punctuation">]</span>中定义的一样。默认为50
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>     <span class="token punctuation">;</span> 和<span class="token punctuation">[</span>supervisord<span class="token punctuation">]</span>定义的一样。默认10
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_capture_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 这个东西是设定capture管道的大小，当值不为0的时候，子进程可以从stdout
+ 
+                                 发送信息，而supervisor可以根据信息，发送相应的event。
+ 
+                                 默认为0，为0的时候表达关闭管道。。。非必须项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> 当设置为ture的时候，当子进程由stdout向文件描述符中写日志的时候，将
+ 
+                                 触发supervisord发送PROCESS_LOG_STDOUT类型的event
+ 
+                                 默认为false。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> 这个东西是设置stderr写的日志路径，当redirect_stderr<span class="token operator">=</span>true。这个就不用
+ 
+                                 设置了，设置了也是白搭。因为它会被写入stdout_logfile的同一个文件中
+ 
+                                 默认为AUTO，也就是随便找个地存，supervisord重启被清空。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 这个出现好几次了，就不重复了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>     <span class="token punctuation">;</span> 这个也是
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_capture_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 这个一样，和stdout_capture一样。 默认为0，关闭状态
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> 这个也是一样，默认为false
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">environment</span><span class="token operator">=</span>A<span class="token operator">=</span><span class="token string">&quot;1&quot;</span>,B<span class="token operator">=</span><span class="token string">&quot;2&quot;</span>       <span class="token punctuation">;</span> 这个是该子进程的环境变量，和别的子进程是不共享的
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">serverurl</span><span class="token operator">=</span>AUTO                <span class="token punctuation">;</span> 
+ 
+<span class="token punctuation">;</span> The below sample eventlistener section shows all possible
+ 
+<span class="token punctuation">;</span> eventlistener subsection values, create one or <span class="token function">more</span> <span class="token string">'real'</span>
+ 
+<span class="token punctuation">;</span> eventlistener: sections to be able to handle event notifications
+ 
+<span class="token punctuation">;</span> sent by supervisor.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>eventlistener:theeventlistenername<span class="token punctuation">]</span> <span class="token punctuation">;</span>这个东西其实和program的地位是一样的，也是suopervisor启动的子进
+ 
+                                       程，不过它干的活是订阅supervisord发送的event。他的名字就叫
+ 
+                                       listener了。我们可以在listener里面做一系列处理，比如报警等等
+ 
+                                       楼主这两天干的活，就是弄的这玩意
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">command</span><span class="token operator">=</span>/bin/eventlistener    <span class="token punctuation">;</span> 这个和上面的program一样，表示listener的可执行文件的路径
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">process_name</span><span class="token operator">=</span>%<span class="token punctuation">(</span>program_name<span class="token punctuation">)</span>s <span class="token punctuation">;</span> 这个也一样，进程名，当下面的numprocs为多个的时候，才需要。否则默认就
+ 
+                                 OK了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">numprocs</span><span class="token operator">=</span><span class="token number">1</span>                    <span class="token punctuation">;</span> 相同的listener启动的个数
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">events</span><span class="token operator">=</span>EVENT                  <span class="token punctuation">;</span> event事件的类型，也就是说，只有写在这个地方的事件类型。才会被发送
+ 
+ 
+ 
+ 
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">buffer_size</span><span class="token operator">=</span><span class="token number">10</span>                <span class="token punctuation">;</span> 这个是event队列缓存大小，单位不太清楚，楼主猜测应该是个吧。当buffer
+ 
+                                 超过10的时候，最旧的event将会被清除，并把新的event放进去。
+ 
+                                 默认值为10。。非必须选项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">directory</span><span class="token operator">=</span>/tmp                <span class="token punctuation">;</span> 进程执行前，会切换到这个目录下执行
+ 
+                                 默认为不切换。。。非必须
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">umask</span><span class="token operator">=</span>022                     <span class="token punctuation">;</span> 淹没，默认为none，不说了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">priority</span><span class="token operator">=</span>-1                   <span class="token punctuation">;</span> 启动优先级，默认-1，也不扯了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">autostart</span><span class="token operator">=</span>true                <span class="token punctuation">;</span> 是否随supervisord启动一起启动，默认true
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">autorestart</span><span class="token operator">=</span>unexpected        <span class="token punctuation">;</span> 是否自动重启，和program一个样，分true,false,unexpected等，注意
+ 
+                                  unexpected和exitcodes的关系
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">startsecs</span><span class="token operator">=</span><span class="token number">1</span>                   <span class="token punctuation">;</span> 也是一样，进程启动后跑了几秒钟，才被认定为成功启动，默认1
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">startretries</span><span class="token operator">=</span><span class="token number">3</span>                <span class="token punctuation">;</span> 失败最大尝试次数，默认3
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">exitcodes</span><span class="token operator">=</span><span class="token number">0,2</span>                 <span class="token punctuation">;</span> 期望或者说预料中的进程退出码，
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopsignal</span><span class="token operator">=</span>QUIT               <span class="token punctuation">;</span> 干掉进程的信号，默认为<span class="token environment constant">TERM</span>，比如设置为QUIT，那么如果QUIT来干这个进程
+ 
+                                 那么会被认为是正常维护，退出码也被认为是expected中的
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopwaitsecs</span><span class="token operator">=</span><span class="token number">10</span>               <span class="token punctuation">;</span> max num secs to <span class="token function">wait</span> b4 SIGKILL <span class="token punctuation">(</span>default <span class="token number">10</span><span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stopasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> send stop signal to the UNIX process group <span class="token punctuation">(</span>default <span class="token boolean">false</span><span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">killasgroup</span><span class="token operator">=</span>false             <span class="token punctuation">;</span> SIGKILL the UNIX process group <span class="token punctuation">(</span>def <span class="token boolean">false</span><span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">user</span><span class="token operator">=</span>chrism                   <span class="token punctuation">;</span>设置普通用户，可以用来管理该listener进程。
+ 
+                                默认为空。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">redirect_stderr</span><span class="token operator">=</span>true          <span class="token punctuation">;</span> 为true的话，stderr的log会并入stdout的log里面
+ 
+                                默认为false。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> 这个不说了，好几遍了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 这个也是
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_logfile_backups</span><span class="token operator">=</span><span class="token number">10</span>     <span class="token punctuation">;</span> 这个也是
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stdout_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> 这个其实是错的，listener是不能发送event
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile</span><span class="token operator">=</span>/a/path        <span class="token punctuation">;</span> 这个也是
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_logfile_maxbytes</span><span class="token operator">=</span>1MB   <span class="token punctuation">;</span> 这个也是
+ 
+<span class="token punctuation">;</span>stderr_logfile_backups        <span class="token punctuation">;</span> 这个不说了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">stderr_events_enabled</span><span class="token operator">=</span>false   <span class="token punctuation">;</span> 这个也是错的，listener不能发送event
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">environment</span><span class="token operator">=</span>A<span class="token operator">=</span><span class="token string">&quot;1&quot;</span>,B<span class="token operator">=</span><span class="token string">&quot;2&quot;</span>       <span class="token punctuation">;</span> 这个是该子进程的环境变量
+ 
+                                 默认为空。。。非必须设置
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">serverurl</span><span class="token operator">=</span>AUTO                <span class="token punctuation">;</span> override serverurl computation <span class="token punctuation">(</span>childutils<span class="token punctuation">)</span>
+ 
+<span class="token punctuation">;</span> The below sample group section shows all possible group values,
+ 
+<span class="token punctuation">;</span> create one or <span class="token function">more</span> <span class="token string">'real'</span> group: sections to create <span class="token string">&quot;heterogeneous&quot;</span>
+ 
+<span class="token punctuation">;</span> process groups.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>group:thegroupname<span class="token punctuation">]</span>  <span class="token punctuation">;</span>这个东西就是给programs分组，划分到组里面的program。我们就不用一个一个去操作了
+ 
+                         我们可以对组名进行统一的操作。 注意：program被划分到组里面之后，就相当于原来
+ 
+                         的配置从supervisor的配置文件里消失了。。。supervisor只会对组进行管理，而不再
+ 
+                         会对组里面的单个program进行管理了
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">programs</span><span class="token operator">=</span>progname1,progname2  <span class="token punctuation">;</span> 组成员，用逗号分开
+ 
+                                 这个是个必须的设置项
+ 
+<span class="token punctuation">;</span><span class="token assign-left variable">priority</span><span class="token operator">=</span><span class="token number">999</span>                  <span class="token punctuation">;</span> 优先级，相对于组和组之间说的
+ 
+                                 默认999。。非必须选项
+ 
+<span class="token punctuation">;</span> The <span class="token punctuation">[</span>include<span class="token punctuation">]</span> section can just contain the <span class="token string">&quot;files&quot;</span> setting.  This
+ 
+<span class="token punctuation">;</span> setting can list multiple files <span class="token punctuation">(</span>separated by whitespace or
+ 
+<span class="token punctuation">;</span> newlines<span class="token punctuation">)</span>.  It can also contain wildcards.  The filenames are
+ 
+<span class="token punctuation">;</span> interpreted as relative to this file.  Included files *cannot*
+ 
+<span class="token punctuation">;</span> include files themselves.
+ 
+<span class="token punctuation">;</span><span class="token punctuation">[</span>include<span class="token punctuation">]</span>                         <span class="token punctuation">;</span>这个东西挺有用的，当我们要管理的进程很多的时候，写在一个文件里面
+ 
+                                    就有点大了。我们可以把配置信息写到多个文件中，然后include过来
+ 
+<span class="token punctuation">;</span>files <span class="token operator">=</span> relative/directory/*.ini
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br><span class="line-number">176</span><br><span class="line-number">177</span><br><span class="line-number">178</span><br><span class="line-number">179</span><br><span class="line-number">180</span><br><span class="line-number">181</span><br><span class="line-number">182</span><br><span class="line-number">183</span><br><span class="line-number">184</span><br><span class="line-number">185</span><br><span class="line-number">186</span><br><span class="line-number">187</span><br><span class="line-number">188</span><br><span class="line-number">189</span><br><span class="line-number">190</span><br><span class="line-number">191</span><br><span class="line-number">192</span><br><span class="line-number">193</span><br><span class="line-number">194</span><br><span class="line-number">195</span><br><span class="line-number">196</span><br><span class="line-number">197</span><br><span class="line-number">198</span><br><span class="line-number">199</span><br><span class="line-number">200</span><br><span class="line-number">201</span><br><span class="line-number">202</span><br><span class="line-number">203</span><br><span class="line-number">204</span><br><span class="line-number">205</span><br><span class="line-number">206</span><br><span class="line-number">207</span><br><span class="line-number">208</span><br><span class="line-number">209</span><br><span class="line-number">210</span><br><span class="line-number">211</span><br><span class="line-number">212</span><br><span class="line-number">213</span><br><span class="line-number">214</span><br><span class="line-number">215</span><br><span class="line-number">216</span><br><span class="line-number">217</span><br><span class="line-number">218</span><br><span class="line-number">219</span><br><span class="line-number">220</span><br><span class="line-number">221</span><br><span class="line-number">222</span><br><span class="line-number">223</span><br><span class="line-number">224</span><br><span class="line-number">225</span><br><span class="line-number">226</span><br><span class="line-number">227</span><br><span class="line-number">228</span><br><span class="line-number">229</span><br><span class="line-number">230</span><br><span class="line-number">231</span><br><span class="line-number">232</span><br><span class="line-number">233</span><br><span class="line-number">234</span><br><span class="line-number">235</span><br><span class="line-number">236</span><br><span class="line-number">237</span><br><span class="line-number">238</span><br><span class="line-number">239</span><br><span class="line-number">240</span><br><span class="line-number">241</span><br><span class="line-number">242</span><br><span class="line-number">243</span><br><span class="line-number">244</span><br><span class="line-number">245</span><br><span class="line-number">246</span><br><span class="line-number">247</span><br><span class="line-number">248</span><br><span class="line-number">249</span><br><span class="line-number">250</span><br><span class="line-number">251</span><br><span class="line-number">252</span><br><span class="line-number">253</span><br><span class="line-number">254</span><br><span class="line-number">255</span><br><span class="line-number">256</span><br><span class="line-number">257</span><br><span class="line-number">258</span><br><span class="line-number">259</span><br><span class="line-number">260</span><br><span class="line-number">261</span><br><span class="line-number">262</span><br><span class="line-number">263</span><br><span class="line-number">264</span><br><span class="line-number">265</span><br><span class="line-number">266</span><br><span class="line-number">267</span><br><span class="line-number">268</span><br><span class="line-number">269</span><br><span class="line-number">270</span><br><span class="line-number">271</span><br><span class="line-number">272</span><br><span class="line-number">273</span><br><span class="line-number">274</span><br><span class="line-number">275</span><br><span class="line-number">276</span><br><span class="line-number">277</span><br><span class="line-number">278</span><br><span class="line-number">279</span><br><span class="line-number">280</span><br><span class="line-number">281</span><br><span class="line-number">282</span><br><span class="line-number">283</span><br><span class="line-number">284</span><br><span class="line-number">285</span><br><span class="line-number">286</span><br><span class="line-number">287</span><br><span class="line-number">288</span><br><span class="line-number">289</span><br><span class="line-number">290</span><br><span class="line-number">291</span><br><span class="line-number">292</span><br><span class="line-number">293</span><br><span class="line-number">294</span><br><span class="line-number">295</span><br><span class="line-number">296</span><br><span class="line-number">297</span><br><span class="line-number">298</span><br><span class="line-number">299</span><br><span class="line-number">300</span><br><span class="line-number">301</span><br><span class="line-number">302</span><br><span class="line-number">303</span><br><span class="line-number">304</span><br><span class="line-number">305</span><br><span class="line-number">306</span><br><span class="line-number">307</span><br><span class="line-number">308</span><br><span class="line-number">309</span><br><span class="line-number">310</span><br><span class="line-number">311</span><br><span class="line-number">312</span><br><span class="line-number">313</span><br><span class="line-number">314</span><br><span class="line-number">315</span><br><span class="line-number">316</span><br><span class="line-number">317</span><br><span class="line-number">318</span><br><span class="line-number">319</span><br><span class="line-number">320</span><br><span class="line-number">321</span><br><span class="line-number">322</span><br><span class="line-number">323</span><br><span class="line-number">324</span><br><span class="line-number">325</span><br><span class="line-number">326</span><br><span class="line-number">327</span><br><span class="line-number">328</span><br><span class="line-number">329</span><br><span class="line-number">330</span><br><span class="line-number">331</span><br><span class="line-number">332</span><br><span class="line-number">333</span><br><span class="line-number">334</span><br><span class="line-number">335</span><br><span class="line-number">336</span><br><span class="line-number">337</span><br><span class="line-number">338</span><br><span class="line-number">339</span><br><span class="line-number">340</span><br><span class="line-number">341</span><br><span class="line-number">342</span><br><span class="line-number">343</span><br><span class="line-number">344</span><br><span class="line-number">345</span><br><span class="line-number">346</span><br><span class="line-number">347</span><br><span class="line-number">348</span><br><span class="line-number">349</span><br><span class="line-number">350</span><br><span class="line-number">351</span><br><span class="line-number">352</span><br><span class="line-number">353</span><br><span class="line-number">354</span><br><span class="line-number">355</span><br><span class="line-number">356</span><br><span class="line-number">357</span><br><span class="line-number">358</span><br><span class="line-number">359</span><br><span class="line-number">360</span><br><span class="line-number">361</span><br><span class="line-number">362</span><br><span class="line-number">363</span><br><span class="line-number">364</span><br><span class="line-number">365</span><br><span class="line-number">366</span><br><span class="line-number">367</span><br><span class="line-number">368</span><br><span class="line-number">369</span><br><span class="line-number">370</span><br><span class="line-number">371</span><br><span class="line-number">372</span><br><span class="line-number">373</span><br><span class="line-number">374</span><br><span class="line-number">375</span><br><span class="line-number">376</span><br><span class="line-number">377</span><br><span class="line-number">378</span><br><span class="line-number">379</span><br><span class="line-number">380</span><br><span class="line-number">381</span><br><span class="line-number">382</span><br><span class="line-number">383</span><br><span class="line-number">384</span><br><span class="line-number">385</span><br><span class="line-number">386</span><br><span class="line-number">387</span><br><span class="line-number">388</span><br><span class="line-number">389</span><br><span class="line-number">390</span><br><span class="line-number">391</span><br><span class="line-number">392</span><br><span class="line-number">393</span><br><span class="line-number">394</span><br><span class="line-number">395</span><br><span class="line-number">396</span><br><span class="line-number">397</span><br><span class="line-number">398</span><br><span class="line-number">399</span><br><span class="line-number">400</span><br><span class="line-number">401</span><br><span class="line-number">402</span><br><span class="line-number">403</span><br><span class="line-number">404</span><br><span class="line-number">405</span><br><span class="line-number">406</span><br><span class="line-number">407</span><br><span class="line-number">408</span><br><span class="line-number">409</span><br><span class="line-number">410</span><br><span class="line-number">411</span><br><span class="line-number">412</span><br><span class="line-number">413</span><br><span class="line-number">414</span><br><span class="line-number">415</span><br><span class="line-number">416</span><br><span class="line-number">417</span><br><span class="line-number">418</span><br><span class="line-number">419</span><br><span class="line-number">420</span><br><span class="line-number">421</span><br><span class="line-number">422</span><br><span class="line-number">423</span><br><span class="line-number">424</span><br><span class="line-number">425</span><br><span class="line-number">426</span><br><span class="line-number">427</span><br><span class="line-number">428</span><br><span class="line-number">429</span><br><span class="line-number">430</span><br><span class="line-number">431</span><br><span class="line-number">432</span><br><span class="line-number">433</span><br><span class="line-number">434</span><br><span class="line-number">435</span><br><span class="line-number">436</span><br><span class="line-number">437</span><br><span class="line-number">438</span><br><span class="line-number">439</span><br><span class="line-number">440</span><br><span class="line-number">441</span><br><span class="line-number">442</span><br><span class="line-number">443</span><br><span class="line-number">444</span><br><span class="line-number">445</span><br><span class="line-number">446</span><br><span class="line-number">447</span><br><span class="line-number">448</span><br><span class="line-number">449</span><br><span class="line-number">450</span><br><span class="line-number">451</span><br><span class="line-number">452</span><br><span class="line-number">453</span><br><span class="line-number">454</span><br><span class="line-number">455</span><br><span class="line-number">456</span><br><span class="line-number">457</span><br><span class="line-number">458</span><br><span class="line-number">459</span><br><span class="line-number">460</span><br><span class="line-number">461</span><br><span class="line-number">462</span><br><span class="line-number">463</span><br><span class="line-number">464</span><br><span class="line-number">465</span><br><span class="line-number">466</span><br><span class="line-number">467</span><br><span class="line-number">468</span><br><span class="line-number">469</span><br><span class="line-number">470</span><br><span class="line-number">471</span><br><span class="line-number">472</span><br><span class="line-number">473</span><br><span class="line-number">474</span><br><span class="line-number">475</span><br><span class="line-number">476</span><br><span class="line-number">477</span><br><span class="line-number">478</span><br><span class="line-number">479</span><br><span class="line-number">480</span><br><span class="line-number">481</span><br></div></div><h2 id="_8-参考文章。"><a href="#_8-参考文章。" class="header-anchor">#</a> 8，参考文章。</h2> <p>网上文章千千万万，任何教了自己的，都是一种缘分。</p> <ul><li>https://blog.csdn.net/StriverFeng/article/details/80057304</li> <li>https://blog.csdn.net/xieliaowa9231/article/details/79077873</li> <li>https://www.jb51.net/article/118045.htm</li> <li>https://blog.csdn.net/donggege214/article/details/80264811</li></ul></div></div>  <div class="page-edit"><!----> <!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">2021/07/03, 17:50:46</span></div></div> <div class="page-nav-wapper"><div class="page-nav-centre-wrap"><a href="/pages/4721.html" class="page-nav-centre page-nav-centre-prev"><div class="tooltip">Logrotate入门了解及生产实践</div></a> <a href="/pages/2501.html" class="page-nav-centre page-nav-centre-next"><div class="tooltip">前言</div></a></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/pages/4721.html" class="prev">Logrotate入门了解及生产实践</a></span> <span class="next"><a href="/pages/2501.html">前言</a>→
+      </span></p></div></div></div> <div class="article-list"><div class="article-title"><a href="/archives/" class="iconfont icon-bi">最近更新</a></div> <div class="article-wrapper"><dl><dd>01</dd> <dt><a href="/pages/5be3f4/"><div>再见WordPress，Hello Vuepress</div></a> <span>07-04</span></dt></dl><dl><dd>02</dd> <dt><a href="/pages/0477b6/"><div>流程控制</div></a> <span>07-06</span></dt></dl><dl><dd>03</dd> <dt><a href="/pages/3e84ca/"><div>运算符</div></a> <span>07-06</span></dt></dl> <dl><dd></dd> <dt><a href="/archives/" class="more">更多文章&gt;</a></dt></dl></div></div></main></div> <div class="footer"><div class="icons"><a href="mailto:Linuxlql@163.com" title="发邮件" target="_blank" class="iconfont icon-youjian"></a><a href="https://github.com/eryajf" title="GitHub" target="_blank" class="iconfont icon-github"></a><a href="https://music.163.com/#/user/home?id=316286554" title="听音乐" target="_blank" class="iconfont icon-erji"></a></div> 
+  Theme by
+  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+    | Copyright © 2017-2021
+    <span>by Eryajf | <a rel="nofollow " target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=18057030">浙ICP备18057030号</a> | <a href="https://github.com/eryajf/eryajf.github.io/blob/master/LICENSE" target="_blank">MIT License</a></span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-fanhuidingbu" style="display:none;"></div> <div title="去评论" class="button blur go-to-comment iconfont icon-pinglun" style="display:none;"></div> <div title="主题模式" class="button blur theme-mode-but iconfont icon-zhuti"><ul class="select-box" style="display:none;"><li class="iconfont icon-zidong">
+          跟随系统
+        </li><li class="iconfont icon-rijianmoshi">
+          浅色模式
+        </li><li class="iconfont icon-yejianmoshi">
+          深色模式
+        </li><li class="iconfont icon-yuedu">
+          阅读模式
+        </li></ul></div></div> <!----> <!----> <!----></div><div class="global-ui"><canvas id="vuepress-canvas-cursor"></canvas><div></div></div></div>
+    <script src="/assets/js/app.8ad1afb9.js" defer></script><script src="/assets/js/2.faffa19e.js" defer></script><script src="/assets/js/75.c1a429f0.js" defer></script>
+  </body>
+</html>
